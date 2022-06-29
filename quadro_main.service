@@ -15,8 +15,8 @@ StandardError=journal
 Environment=PYTHONUNBUFFERED=1
 
 
-WorkingDirectory=/home/pi/drive_main
-ExecStart=python3 main.py
+WorkingDirectory=/opt/quadro_main
+ExecStart=main
 ExecStopPost=systemctl stop quadro_rear_sight.service
 ExecStopPost=systemctl stop quadro_websocket_server.service
 TimeoutSec=10
