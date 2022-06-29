@@ -15,8 +15,8 @@ StandardError=journal
 Environment=PYTHONUNBUFFERED=1
 
 
-WorkingDirectory=/home/pi/diag
-ExecStart=python3 main.py
+WorkingDirectory=/opt/machine_gun_main/
+ExecStart=/opt/machine_gun_main/main
 ExecStopPost=systemctl stop machine_gun_rear_sight.service
 TimeoutSec=10
 Restart=on-failure

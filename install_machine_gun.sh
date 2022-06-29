@@ -19,7 +19,7 @@ sudo sh ./install_python_lib.sh
 sudo sh ./install_main.sh
 
 echo "install services..."
-sudo cp machine_* /etc/systemd/system
+sudo cp *.service /etc/systemd/system
 sudo systemctl daemon-reload
 
 sudo systemctl enable machine_gun_main.service
