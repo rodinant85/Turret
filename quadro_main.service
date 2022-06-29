@@ -1,0 +1,27 @@
+[Unit]
+Description=Starts quadro diagnostic and services
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=6
+StartLimitAction=reboot
+
+
+[Service]
+Type=simple
+StandardOutput=journal
+StandardError=journal
+
+Environment=PYTHONUNBUFFERED=1
+
+
+WorkingDirectory=/home/pi/drive_main
+ExecStart=python3 main.py
+ExecStopPost=systemctl stop quadro_rear_sight.service
+ExecStopPost=systemctl stop quadro_websocket_server.service
+TimeoutSec=10
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
