@@ -1,24 +1,21 @@
 import asyncio
 import logging
 import time
-import serial.rs485
+import aioserial
 import os
 import websockets
 from websockets import WebSocketServerProtocol
 from threading import Timer
-import RPi.GPIO as GPIO
-
-txen = 22
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(txen, GPIO.OUT)
 
 
 logging.basicConfig(level=logging.INFO)
+
 
 def usb_ports():
     response = os.popen(f'ls /dev | grep  ttyUSB').read()
     usb_list = response.split('\n')[:-1]
     return usb_list
+
 
 usb_ports = usb_ports()
 
@@ -27,22 +24,18 @@ if len(usb_ports) != 0:
 else:
     port = 'serial0'
 
-logging.info(f'Serial port: /dev/{port}')
-
-ser = serial.rs485.RS485(
-        port='/dev/serial0',
-        baudrate=115200,
-        xonxoff=False,
-        parity=serial.PARITY_NONE,
-        stopbits=serial.STOPBITS_ONE,
-        bytesize=serial.EIGHTBITS,
-        timeout=0.1
-    )
-
-ser.rs485_mode = serial.rs485.RS485Settings()
+ser = aioserial.AioSerial(
+    # port='/dev/serial0',
+    port='/dev/' + port,
+    baudrate=115200,
+    xonxoff=False,
+    parity=aioserial.PARITY_NONE,
+    stopbits=aioserial.STOPBITS_ONE,
+    bytesize=aioserial.EIGHTBITS,
+    timeout=0.1)
 
 
-def to_bytes(message: str):
+def parse_str_to_bytes(message: str):
     msg_header = 0xff
     msg_type = 0x00
     zooming_step_coefficient = 0.005
@@ -84,7 +77,7 @@ def to_bytes(message: str):
     return _msg
 
 
-def serial_to_web(serial_data: bytes):
+def parse_byte_to_str(serial_data: bytes):
     if len(serial_data) == 12 and sum(serial_data[1:-1]) % 256 == serial_data[11]:
         stp_x = int.from_bytes(serial_data[2:6], byteorder='little', signed=True)
         stp_y = int.from_bytes(serial_data[6:10], byteorder='little', signed=True)
@@ -102,14 +95,20 @@ def serial_to_web(serial_data: bytes):
         return None
 
 
+async def read_serial(server):
+    while True:
+        serial_data = await ser.read_async(size=12)
+        web_message = parse_byte_to_str(serial_data)
+        if web_message is not None:
+            await server.send_to_clients(web_message)
+
+
 def stop_motors():
-    logging.info('Stop command send')
+    print('Stop command send')
     motor_stop_command = b'\xff\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-    GPIO.output(txen, GPIO.HIGH)
     for i in range(1, 20):
         ser.write(motor_stop_command)
         time.sleep(0.05)
-    GPIO.output(txen, GPIO.LOW)
 
 
 class Server:
@@ -118,7 +117,7 @@ class Server:
     def __init__(self, time_to_stop_motors: int = 1):
         self.time_to_stop_motors = time_to_stop_motors
         self.t = Timer(self.time_to_stop_motors, stop_motors)
-        #self.t.start()
+        # self.t.start()
 
     async def register(self, ws: WebSocketServerProtocol) -> None:
         self.clients.add(ws)
@@ -129,10 +128,6 @@ class Server:
         logging.info(f'{ws.remote_address} disconnect')
 
     async def send_to_clients(self, message: str) -> None:
-        if self.clients:
-            await asyncio.wait([client.send(message) for client in self.clients])
-
-    async def send_to_last_client(self, message: str, ws: WebSocketServerProtocol) -> None:
         if self.clients:
             await asyncio.wait([client.send(message) for client in self.clients])
 
@@ -150,28 +145,23 @@ class Server:
                 self.t.cancel()
                 self.t = Timer(self.time_to_stop_motors, stop_motors)
                 self.t.start()
-                b = to_bytes(message)
+                b = parse_str_to_bytes(message)
                 bts = bytes(b)
                 try:
-                    GPIO.output(txen, GPIO.HIGH)
-                    ser.write(bts)
-                    GPIO.output(txen, GPIO.LOW)
+                    await ser.write_async(bts)
                 except Exception as e:
                     print(e)
             if 'error' in message:
                 await self.send_to_clients(message)
 
-            serial_data = ser.read(12)
-            if serial_to_web(serial_data) is not None:
-                await self.send_to_clients(serial_to_web(serial_data))
-
 
 async def main():
     server = Server()
     start_server = websockets.serve(server.ws_handler, '', 56779, ping_interval=None)
+    task = asyncio.create_task(read_serial(server))
     async with start_server:
         await asyncio.Future()
+    await task
 
 
 asyncio.run(main())
-

@@ -1,0 +1,24 @@
+[Unit]
+Description=motor control main diagnostic service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+#User=pi
+#Group=pi
+Restart=on-failure
+StartLimitBurst=2
+StartLimitInterval=30
+WorkingDirectory=/opt/motor_control_main/
+ExecStart=/opt/motor_control_main/main
+ExecStopPost=systemctl stop machine_gun_websocket.service
+TimeoutSec=10
+StandardOutput=journal
+StandardError=journal
+
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
+

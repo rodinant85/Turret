@@ -1,11 +1,11 @@
 #!/bin/bash
 
-cd drive_main
+cd motor_control_main
 sudo pyinstaller -F main.py
-sudo mkdir /opt/quadro_main
-sudo chmod 755 /opt/quadro_main
-sudo cp dist/main /opt/quadro_main/
-sudo chmod 755 /opt/quadro_main/main
+sudo mkdir /opt/motor_control_main
+sudo chmod 755 /opt/motor_control_main
+sudo cp dist/main /opt/motor_control_main/
+sudo chmod 755 /opt/motor_control_main/main
 
 
 cd ../websocket_server

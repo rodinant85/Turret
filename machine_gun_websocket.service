@@ -1,0 +1,23 @@
+[Unit]
+Description=starting an machine gun websocket server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+#User=pi
+#Group=pi
+Restart=on-failure
+StartLimitBurst=2
+StartLimitInterval=30
+WorkingDirectory=/opt/
+ExecStart=/opt/ws_server
+TimeoutSec=10
+StandardOutput=journal
+StandardError=journal
+
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
+
