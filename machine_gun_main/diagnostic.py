@@ -8,14 +8,13 @@ import spidev
 import re
 import socket
 import requests
-import app.ws_client
+import ws_client
 import asyncio
-from websocket import create_connection
 
 
 def is_camera_ready(num=0):
     camera_response = os.popen(f'v4l2-ctl --device=/dev/video{str(num)} -I').read()
-    if f'ok' in camera_response:
+    if f'(Camera 0: ok)' in camera_response:
         return 1
     else:
         return 0

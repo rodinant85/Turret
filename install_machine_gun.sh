@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git clone --branch quadro https://github.com/rodinant85/Turret
+git clone --branch machine_gun https://github.com/rodinant85/Turret
 
 cd Turret
 cd rear_sight
@@ -16,13 +16,13 @@ cp -r rear_sight ../rear_sight
 echo "install python library and main program..."
 
 sudo sh ./install_python_lib.sh
-sudo sh ./install_main_and_websocket.sh
+sudo sh ./install_main.sh
 
 echo "install services..."
-sudo cp quadro_* /etc/systemd/system
+sudo cp machine_* /etc/systemd/system
 sudo systemctl daemon-reload
 
-sudo systemctl enable quadro_main.service
+sudo systemctl enable machine_gun_main.service
 
 cd ..
 rm -rf Turret/
