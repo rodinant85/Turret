@@ -7,7 +7,7 @@ Wants=network-online.target
 Type=simple
 Restart=on-failure
 WorkingDirectory=/opt
-ExecStart=ws_server
+ExecStart=/opt/ws_server
 StandardOutput=journal
 StandardError=journal
 

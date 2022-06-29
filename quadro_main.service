@@ -16,7 +16,7 @@ Environment=PYTHONUNBUFFERED=1
 
 
 WorkingDirectory=/opt/quadro_main
-ExecStart=main
+ExecStart=/opt/quadro_main/main
 ExecStopPost=systemctl stop quadro_rear_sight.service
 ExecStopPost=systemctl stop quadro_websocket_server.service
 TimeoutSec=10
