@@ -1,6 +1,7 @@
 #!/bin/bash
 
 git clone --branch motor_control_plate https://github.com/rodinant85/Turret
+cd Turret
 
 echo "install python library and main program..."
 
