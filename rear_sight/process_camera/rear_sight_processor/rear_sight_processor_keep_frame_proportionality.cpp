@@ -287,7 +287,7 @@ void RearSightProcessor::setCorrections(int dx, int dy) {
 
 void RearSightProcessor::recalculateCorrectedRoiCenter() {
     std::pair<int, int> roiCenterPointCorrected;
-    //_delegate = DelegateWS::getInstance();
+    _delegate = DelegateWS::getInstance();
     roiCenterPointCorrected.first = _roiCenterPoint.first - _roiDistanceCorrection.first;
     roiCenterPointCorrected.second = _roiCenterPoint.second - _roiDistanceCorrection.second;
 
@@ -324,7 +324,7 @@ void RearSightProcessor::recalculateCorrectedRoiCenter() {
                             (double) availableX / (double) WIDTH : (double) availableY / (double) HEIGHT;
     std::cout << "\n\n\n Current percent " << currentPercent << "\n\n";
 
-    //_delegate->doEvent(std::make_shared<EventWS>(EVENT_CHANGE_ZOOM, currentPercent, widthROI, heightROI));
+    _delegate->doEvent(std::make_shared<EventWS>(EVENT_CHANGE_ZOOM, currentPercent, WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME));
 
     if (currentPercent > MIN_ZOOM_COEFFICIENT) {
         _roiCenterPointCorrected.first = roiCenterPointCorrected.first;
