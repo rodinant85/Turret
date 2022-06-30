@@ -7,6 +7,16 @@
 #include <string.h>
 
 
+std::string readSizes(){
+    std::fstream myFile("src/sizes.conf", std::ios_base::in);
+    std::string message;
+    myFile >> message;
+    std::cout << "read sizes: " << message << std::endl;
+    myFile.close();
+    return message;
+}
+
+
 WebServerWorker::WebServerWorker() {
 //    pathToWebFiles = "src/server_files";
     start_web_server_processing();
@@ -82,6 +92,9 @@ void WebServerWorker::handleEventWS(std::shared_ptr<EventWS> event) {
 
         switch (event->getEventID()) {
             case EVENT_CLIENT_CONNECTED:
+               {
+                std::string sizes = readSizes();
+                handler->sendValuesJSON(sizes);
                 jsonString += "{";
                 if (isRegistrationFire())
                     jsonString += "REG_FIRE";
@@ -100,6 +113,7 @@ void WebServerWorker::handleEventWS(std::shared_ptr<EventWS> event) {
                 jsonString = getFireCorrectionsLineJSON();
                 handler->sendValuesJSON(jsonString.data());
                 std::cout << "\n\n\n" << jsonString << "\n\n\n";
+               }
                 break;
             case EVENT_CLIENT_DISCONNECTED:
 //            turtle_manager->say_server_leave();
@@ -285,14 +299,10 @@ void WebServerWorker::handleHolderEvents(std::shared_ptr<EventWS> eventWs) {
             break;
 
         case EVENT_CHANGE_ZOOM: {
-
-            std::string z = std::to_string(round(eventWs->getData() * 1000) / 1000);
-            char round_z[5];
-            strncpy(round_z, &z[0], 5);
+            std::string z = std::to_string(eventWs->getData());
             std::string w = std::to_string(eventWs->getWidth());
             std::string h = std::to_string(eventWs->getHeight());
-            std::cout << " ZOOM: " << round_z << "W: " << w << "H: " << h << "\n";
-            message = "{\"sizes\":{\"full_width\":" + w + ",\"full_height\":" + h + ",\"zoom\":" + round_z + "}}";
+            message = "{\"sizes\":{\"full_width\":" + w + ",\"full_height\":" + h + ",\"zoom\":" + z + "}}";
             handler->sendValuesJSON(message);
     }
             break;

@@ -5,7 +5,23 @@
 #include "rear_sight_processor.h"
 #include "image_processing.h"
 #include "../../web_server/web_server_events/holder_commands.h"
+#include <fstream>
+#include <cmath>
+#include <string.h>
 
+void saveSizes(int width, int height, double zoom){
+    std::string z = std::to_string(zoom);
+    std::string w = std::to_string(width);
+    std::string h = std::to_string(height);
+    std::ofstream myfile;
+    myfile.open ("src/sizes.conf");
+    std::string message;
+    message = "{\"sizes\":{\"full_width\":" +
+              w + ",\"full_height\":" +
+              h + ",\"zoom\":" + z + "}}";
+    myfile << message;
+    myfile.close();
+}
 
 
 RearSightProcessor::RearSightProcessor(std::shared_ptr<FrameParameters> frame_param) {
@@ -61,7 +77,7 @@ int RearSightProcessor::on_zoom_plus_processor() {
 
     if (_isFixedROICenter)
         recalculateCorrectedRoiCenter();
-
+    saveSizes(WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME, m_CURRENT_ZOOM_SIZE);
     _delegate->doEvent(std::make_shared<EventWS>(EVENT_CHANGE_ZOOM, m_CURRENT_ZOOM_SIZE, WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME));
 
     return OPERATION_SUCCESSFUL;
@@ -184,6 +200,8 @@ int RearSightProcessor::on_zoom_minus_processor() {
 //    std::cout << "- fixed ROI center  x=" << m_CROPPED_X + (m_CROPPED_WIDTH / 2) << " y=" << m_CROPPED_Y + (m_CROPPED_HEIGHT / 2) << "\n";
     if (_isFixedROICenter)
         recalculateCorrectedRoiCenter();
+
+    saveSizes(WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME, m_CURRENT_ZOOM_SIZE);
     _delegate->doEvent(std::make_shared<EventWS>(EVENT_CHANGE_ZOOM, m_CURRENT_ZOOM_SIZE, WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME));
 
     return OPERATION_SUCCESSFUL;
@@ -324,6 +342,7 @@ void RearSightProcessor::recalculateCorrectedRoiCenter() {
                             (double) availableX / (double) WIDTH : (double) availableY / (double) HEIGHT;
     std::cout << "\n\n\n Current percent " << currentPercent << "\n\n";
 
+    saveSizes(WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME, currentPercent);
     _delegate->doEvent(std::make_shared<EventWS>(EVENT_CHANGE_ZOOM, currentPercent, WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME));
 
     if (currentPercent > MIN_ZOOM_COEFFICIENT) {
