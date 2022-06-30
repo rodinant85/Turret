@@ -1,4 +1,8 @@
 #include <signal.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cmath>
 
 /// Included a source code for working with Seasocks server.
 #include "web_server_worker.h"
@@ -10,6 +14,16 @@ void my_handler(int s){
 
 /** This is a start point of the program*/
 int main(int argc, char *argv[]) {
+    // save default frame size
+    std::ofstream myfile;
+    myfile.open ("src/sizes.conf");
+    std::string message;
+    message = "{\"sizes\":{\"full_width\":" + std::to_string(WIDTH_STREAM_FRAME) +
+            ",\"full_height\":" + std::to_string(HEIGHT_STREAM_FRAME) + ",\"zoom\":0.0445}}";
+    myfile << message;
+    myfile.close();
+    //----------------
+    
     struct sigaction sigIntHandler;
 
     sigIntHandler.sa_handler = my_handler;

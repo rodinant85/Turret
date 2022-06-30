@@ -5,7 +5,28 @@
 #include "rear_sight_processor.h"
 #include "image_processing.h"
 #include "../../web_server/web_server_events/holder_commands.h"
+#include <cmath>
+#include <iostream>
+#include <fstream>
+#include <string.h>
 
+
+void saveSizes(int width, int height, double zoom){
+    std::string z = std::to_string(round(zoom * 1000) / 1000);
+    char round_z[5];
+    strncpy(round_z, &z[0], 5);
+    std::string w = std::to_string(width);
+    std::string h = std::to_string(height);
+
+    std::ofstream myfile;
+    myfile.open ("src/sizes.conf");
+    std::string message;
+    message = "{\"sizes\":{\"full_width\":" +
+              w + ",\"full_height\":" +
+              h + ",\"zoom\":" + round_z + "}}";
+    myfile << message;
+    myfile.close();
+}
 
 
 RearSightProcessor::RearSightProcessor(std::shared_ptr<FrameParameters> frame_param) {
@@ -63,6 +84,7 @@ int RearSightProcessor::on_zoom_plus_processor() {
         recalculateCorrectedRoiCenter();
 
     _delegate->doEvent(std::make_shared<EventWS>(EVENT_CHANGE_ZOOM, m_CURRENT_ZOOM_SIZE, WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME));
+    saveSizes(WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME, m_CURRENT_ZOOM_SIZE);
 
     return OPERATION_SUCCESSFUL;
 }
@@ -185,6 +207,7 @@ int RearSightProcessor::on_zoom_minus_processor() {
     if (_isFixedROICenter)
         recalculateCorrectedRoiCenter();
     _delegate->doEvent(std::make_shared<EventWS>(EVENT_CHANGE_ZOOM, m_CURRENT_ZOOM_SIZE, WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME));
+    saveSizes(WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME, m_CURRENT_ZOOM_SIZE);
 
     return OPERATION_SUCCESSFUL;
 }
@@ -325,6 +348,7 @@ void RearSightProcessor::recalculateCorrectedRoiCenter() {
     std::cout << "\n\n\n Current percent " << currentPercent << "\n\n";
 
     _delegate->doEvent(std::make_shared<EventWS>(EVENT_CHANGE_ZOOM, currentPercent, WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME));
+    saveSizes(WIDTH_STREAM_FRAME, HEIGHT_STREAM_FRAME, currentPercent);
 
     if (currentPercent > MIN_ZOOM_COEFFICIENT) {
         _roiCenterPointCorrected.first = roiCenterPointCorrected.first;

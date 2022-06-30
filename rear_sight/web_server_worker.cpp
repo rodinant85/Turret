@@ -6,6 +6,15 @@
 #include <cmath>
 #include <string.h>
 
+std::string readSizes(){
+    std::fstream myFile("src/sizes.conf", std::ios_base::in);
+    std::string message;
+    myFile >> message;
+    std::cout << "read sizes: " << message << std::endl;
+    myFile.close();
+    return message;
+}
+
 
 WebServerWorker::WebServerWorker() {
 //    pathToWebFiles = "src/server_files";
@@ -82,6 +91,9 @@ void WebServerWorker::handleEventWS(std::shared_ptr<EventWS> event) {
 
         switch (event->getEventID()) {
             case EVENT_CLIENT_CONNECTED:
+            {
+                std::string sizes = readSizes();
+                
                 jsonString += "{";
                 if (isRegistrationFire())
                     jsonString += "REG_FIRE";
@@ -93,6 +105,7 @@ void WebServerWorker::handleEventWS(std::shared_ptr<EventWS> event) {
                     jsonString += ", N_SWP_STRM";
                 jsonString += "}";
                 handler->sendValuesJSON(jsonString.data());
+                handler->sendValuesJSON(sizes);
 
                 // send message with correction table information
                 // set timeout before sending, that give time for creating CameraThread object instance
@@ -100,10 +113,12 @@ void WebServerWorker::handleEventWS(std::shared_ptr<EventWS> event) {
                 jsonString = getFireCorrectionsLineJSON();
                 handler->sendValuesJSON(jsonString.data());
                 std::cout << "\n\n\n" << jsonString << "\n\n\n";
+                }
                 break;
             case EVENT_CLIENT_DISCONNECTED:
 //            turtle_manager->say_server_leave();
 //                _masterTurtleManager->command_server_leave();
+
                 break;
         }
     }
