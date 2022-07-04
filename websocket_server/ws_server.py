@@ -4,6 +4,7 @@ import time
 import aioserial
 import os
 import websockets
+from bitarray import bitarray
 from websockets import WebSocketServerProtocol
 from threading import Timer
 
@@ -35,7 +36,7 @@ ser = aioserial.AioSerial(
     timeout=0.1)
 
 
-def parse_str_to_bytes(message: str):
+def parse_speed_msg_to_bytes(message: str):
     msg_header = 0xff
     msg_type = 0x00
     zooming_step_coefficient = 0.005
@@ -75,21 +76,50 @@ def parse_str_to_bytes(message: str):
     crc8 = sum(_msg[1:]) % 256
     _msg.append(crc8)
     return _msg
+    
+
+def parse_config_msg_to_bytes(message: str):
+    msg_header = 0xff
+    msg_type = 0x01
+
+    # message example
+    # '{"config":{"OX_MAX_FREQ":5000;"OY_MAX_FREQ":6000}}'
+    max_freq_x, max_freq_y = message.strip('{"config":{"OX_MAX_FREQ":').strip('}}').split(';"OY_MAX_FREQ":')
+
+    max_freq_x_hi = int(max_freq_x) // 256
+    max_freq_x_lo = int(max_freq_x) % 256
+    max_freq_y_hi = int(max_freq_y) // 256
+    max_freq_y_lo = int(max_freq_y) % 256
+
+    _msg = [msg_header, msg_type, max_freq_x_lo, max_freq_x_hi, max_freq_y_lo, max_freq_y_hi, 0, 0, 0, 0, 0]
+    crc8 = sum(_msg[1:]) % 256
+    _msg.append(crc8)
+    return _msg
 
 
 def parse_byte_to_str(serial_data: bytes):
+    speed_msg_type = 0x00
+    config_msg_type = 0x01
     if len(serial_data) == 12 and sum(serial_data[1:-1]) % 256 == serial_data[11]:
-        stp_x = int.from_bytes(serial_data[2:6], byteorder='little', signed=True)
-        stp_y = int.from_bytes(serial_data[6:10], byteorder='little', signed=True)
-        sw = serial_data[10]
-        sw_x_max = 1 if ((sw & 0b00000001) != 0) else 0
-        sw_x_min = 1 if ((sw & 0b00000010) != 0) else 0
-        sw_y_max = 1 if ((sw & 0b00000100) != 0) else 0
-        sw_y_min = 1 if ((sw & 0b00001000) != 0) else 0
-        msg = '{"resp":{"STP_X":' + str(stp_x) + ',"STP_Y":' + str(stp_y) + ',"SW_X_MAX":' + str(sw_x_max) + \
-              ',"SW_X_MIN":' + str(sw_x_min) + ',"SW_Y_MAX":' + str(sw_y_max) + ',"SW_Y_MIN":' + \
-              str(sw_y_min) + '}}'
-        return msg
+        if serial_data[1] == speed_msg_type:
+            stp_x = int.from_bytes(serial_data[2:6], byteorder='little', signed=True)
+            stp_y = int.from_bytes(serial_data[6:10], byteorder='little', signed=True)
+            sw = serial_data[10]
+            sw_x_max = 1 if ((sw & 0b00000001) != 0) else 0
+            sw_x_min = 1 if ((sw & 0b00000010) != 0) else 0
+            sw_y_max = 1 if ((sw & 0b00000100) != 0) else 0
+            sw_y_min = 1 if ((sw & 0b00001000) != 0) else 0
+            msg = '{"resp":{"STP_X":' + str(stp_x) + ',"STP_Y":' + str(stp_y) + ',"SW_X_MAX":' + str(sw_x_max) + \
+                  ',"SW_X_MIN":' + str(sw_x_min) + ',"SW_Y_MAX":' + str(sw_y_max) + ',"SW_Y_MIN":' + \
+                  str(sw_y_min) + '}}'
+            return msg
+
+        if serial_data[1] == config_msg_type:
+            max_freq_x = int.from_bytes(serial_data[2:4], byteorder='little', signed=False)
+            max_freq_y = int.from_bytes(serial_data[4:6], byteorder='little', signed=False)
+            msg = '{"confirm":{"OX_MAX_FREQ":' + str(max_freq_x) + ',"OY_MAX_FREQ":' + str(max_freq_y) + '}}'
+            return msg
+
     else:
         ser.reset_input_buffer()
         return None
@@ -140,18 +170,31 @@ class Server:
 
     async def distribute(self, ws: WebSocketServerProtocol) -> None:
         async for message in ws:
-            web_msg_header = '{"comm":["MV_HLD:'
-            if web_msg_header in message:
+            command_msg_header = '{"comm":["MV_HLD:'
+            config_msg_header = '{"config":'
+            error_msg_header = '{"error":'
+            if message.startswith(command_msg_header):
                 self.t.cancel()
                 self.t = Timer(self.time_to_stop_motors, stop_motors)
                 self.t.start()
-                b = parse_str_to_bytes(message)
+                b = parse_speed_msg_to_bytes(message)
                 bts = bytes(b)
                 try:
                     await ser.write_async(bts)
+                    # await asyncio.sleep(0.05)
                 except Exception as e:
                     print(e)
-            if 'error' in message:
+
+            if message.startswith(config_msg_header):
+                b = parse_config_msg_to_bytes(message)
+                bts = bytes(b)
+                try:
+                    await ser.write_async(bts)
+                    # await asyncio.sleep(0.05)
+                except Exception as e:
+                    print(e)
+
+            if message.startswith(error_msg_header):
                 await self.send_to_clients(message)
 
 
@@ -165,3 +208,4 @@ async def main():
 
 
 asyncio.run(main())
+
