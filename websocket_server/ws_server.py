@@ -40,8 +40,6 @@ def parse_speed_msg_to_bytes(message: str):
     msg_header = 0xff
     msg_type = 0x00
     zooming_step_coefficient = 0.005
-    speed_direction = None
-    sp_direction = None
 
     # {"comm":["MV_HLD:DX:-0.089:DY:0.115"]}
     try:
@@ -76,7 +74,7 @@ def parse_config_msg_to_bytes(message: str):
     # message example
     # '{"config":{"OX_MAX_FREQ":5000;"OY_MAX_FREQ":6000}}'
     max_freq_x, max_freq_y = message.strip('{"config":{"OX_MAX_FREQ":').strip('}}').split(';"OY_MAX_FREQ":')
-    
+
     max_freq_x_hi = int(max_freq_x) // 256
     max_freq_x_lo = int(max_freq_x) % 256
     max_freq_y_hi = int(max_freq_y) // 256
@@ -89,10 +87,10 @@ def parse_config_msg_to_bytes(message: str):
 
 
 def parse_byte_to_str(serial_data: bytes):
-    speed_msg_type = 0x00
-    config_msg_type = 0x01
+    status_msg_type = 0x02
+    settings_msg_type = 0x01
     if len(serial_data) == 12 and sum(serial_data[1:-1]) % 256 == serial_data[11]:
-        if serial_data[1] == speed_msg_type:
+        if serial_data[1] == status_msg_type:
             stp_x = int.from_bytes(serial_data[2:6], byteorder='little', signed=True)
             stp_y = int.from_bytes(serial_data[6:10], byteorder='little', signed=True)
             sw = serial_data[10]
@@ -105,7 +103,7 @@ def parse_byte_to_str(serial_data: bytes):
                   str(sw_y_min) + '}}'
             return msg
 
-        if serial_data[1] == config_msg_type:
+        if serial_data[1] == settings_msg_type:
             max_freq_x = int.from_bytes(serial_data[2:4], byteorder='little', signed=False)
             max_freq_y = int.from_bytes(serial_data[4:6], byteorder='little', signed=False)
             msg = '{"confirm":{"OX_MAX_FREQ":' + str(max_freq_x) + ',"OY_MAX_FREQ":' + str(max_freq_y) + '}}'
