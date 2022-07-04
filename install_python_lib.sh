@@ -9,4 +9,4 @@ sudo pip3 install spidev
 sudo pip3 install websockets
 sudo pip3 install websocket-client
 sudo pip3 install aioserial
-sudo pip3 install bitearray
+sudo pip3 install bitarray
