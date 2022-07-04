@@ -1611,6 +1611,11 @@ function errorsClose() {
 }
 
 
+function errorsClear() {
+    document.getElementById("errors_p").innerHTML = "";
+}
+
+
 function errorsShow() {
     document.getElementById("errors_div").classList.remove("hidden-class");
 }
@@ -1618,7 +1623,8 @@ function errorsShow() {
 
 function errorTextOut(mes) {
     errorsShow();
-    document.getElementById("errors_textarea").innerText = mes;
+    //document.getElementById("errors_textarea").innerText = mes;
+    document.getElementById("errors_p").innerHTML += '<span style="color: darkred;">' + mes + '</span><br>'
 }
 
 
