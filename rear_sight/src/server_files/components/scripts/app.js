@@ -1108,6 +1108,7 @@ function getAllFromData(data) {
             // examle message:
             // {"sizes":{"full_width":1280,"full_height":720,"zoom":0.345}}
             video_zoom = +r["sizes"]["zoom"];
+            measuringOnChanges();
         }
     } catch(e) {
         console.log(e);
@@ -1133,6 +1134,8 @@ function getTrackerDelta2(data) {
     }
 }
 
+
+let is_configs_sending_complete = false;
 
 function stopIntervalHandler() {
     //clearInterval(stopInterval);
@@ -1164,6 +1167,15 @@ function stopIntervalHandler() {
                         if (GAMEPAD_PRESENT) { 
                             st = "{\"comm\":[\"MV_HLD:DX:" + gamepad_axe_x + ":DY:" + gamepad_axe_y + "\"]}"; 
                         }
+                    }
+                }
+
+                if (typeof IS_SEND_CONFIGS_NEEDED != "undefined") {
+                    if (IS_SEND_CONFIGS_NEEDED && !is_configs_sending_complete) {
+                        let xmf = OX_STEPPER_MAX_STEPS_FREQUENCEY;
+                        let ymf = OY_STEPPER_MAX_STEPS_FREQUENCEY;
+
+                        st = '{"config":{"OX_MAX_FREQ":' + xmf + ';"OY_MAX_FREQ":' + ymf + '}}'; 
                     }
                 }
 
@@ -1201,7 +1213,7 @@ function connectSecondSocket() {
         if (WS2_MESSAGES_LOG) {
             console.log("Received from ws2: " + event.data);
         }
-        getMotorsPosition(event.data);
+        getMotorsData(event.data);
       };
 
     ws2.onerror = function () {
@@ -1217,17 +1229,19 @@ function ws2_send_once() {
 }
 
 
-function getMotorsPosition(mess) {
+function getMotorsData(mess) {
     try {
-        // mess example
-        // {"resp":{"STP_X":-3509,"STP_Y":955,"SW_X_MAX":0,"SW_X_MIN":0,"SW_Y_MAX":0,"SW_Y_MIN":0}}
         const r = JSON.parse(mess);
 
+        // mess example
+        // {"error":"Fatal error on line 48!"}
         if (typeof r["error"] != "undefined") {
             errorTextOut(r["error"]);
             return;
         }
 
+        // mess example
+        // {"resp":{"STP_X":-3509,"STP_Y":955,"SW_X_MAX":0,"SW_X_MIN":0,"SW_Y_MAX":0,"SW_Y_MIN":0}}
         if (typeof r["resp"] != "undefined") {
             x_position_steps = r.resp.STP_X;
             y_position_steps = r.resp.STP_Y;
@@ -1318,6 +1332,18 @@ function getMotorsPosition(mess) {
             x_angle_position_degree = angleConstraint(x_angle_position_degree);
             y_angle_position_degree = angleConstraint(y_angle_position_degree);
         }
+
+        // mess example
+        // {"confirm":{"OX_MAX_FREQ":6000;"OY_MAX_FREQ":5000}}
+        if (typeof r["confirm"] != "undefined") {
+            // check confirmation
+            if (r["confirm"]["OX_MAX_FREQ"] == OX_STEPPER_MAX_STEPS_FREQUENCEY &&
+            r["confirm"]["OY_MAX_FREQ"] == OY_STEPPER_MAX_STEPS_FREQUENCEY) {
+                is_configs_sending_complete = true;
+            }
+            return;
+        }
+
     } catch(e) {
         console.log(e);
     }

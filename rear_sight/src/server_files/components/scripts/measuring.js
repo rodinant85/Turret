@@ -1,7 +1,7 @@
-let MEASURING_ZOOM_MIN = 0.5;
-let MEASURING_ZOOM_MAX = 10;
-let MEASURING_ZOOM_DEFAULT = 5;
-let MEASURING_ZOOM_STEP = 0.1;
+let MEASURING_ZOOM_MIN = 0.2;
+let MEASURING_ZOOM_MAX = 5;
+let MEASURING_ZOOM_DEFAULT = 2.5;
+let MEASURING_ZOOM_STEP = 0.05;
 let measuring_zoom = MEASURING_ZOOM_DEFAULT;
 let is_measuring = false;
 let measuring_interval = 0; 
@@ -15,6 +15,11 @@ function processMeasuring() {
         return;
     }
 
+    measuringRoutine();
+}
+
+
+function measuringRoutine() {
     is_measuring = true;
     resetMeasuringInterval();
     measuringImageShow();
@@ -44,10 +49,22 @@ function processMeasuring() {
     }
 
     let square_image_width_in_mrad = full_screen_width_in_mrad * square_image_width_part;
+    let dist = 1000 / square_image_width_in_mrad;
 
-    let text = "1m at " + square_image_width_in_mrad + "m";
+
+    let st = "" + Math.floor(square_image_width_in_mrad * 10) / 10;
+    let st2 = "" + Math.floor(dist);
+
+    let text = "" + st + " mrad = 1m at " + st2 + "m";
 
     document.getElementById("measuring_label").innerText = text;
+}
+
+
+function measuringOnChanges() {
+    if (is_measuring) {
+        measuringRoutine();
+    }
 }
 
 

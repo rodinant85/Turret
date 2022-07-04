@@ -15,6 +15,10 @@ var is_gp_space_pressed = false;
 var is_gp_zoom_in_pressed = false;
 var is_gp_zoom_out_pressed = false;
 var is_gp_tracker_stop_pressed = false;
+var is_gp_measuring_plus = false;
+var is_gp_measuring_minus = false;
+
+var gamepad_simulate_key_repeat_interval = 0;
 
 var gamepads = [];
 
@@ -68,6 +72,8 @@ function addNewPads() {
             let gp_zoom_in = gp.buttons[3].pressed;
             let gp_zoom_out = gp.buttons[0].pressed;
             let gp_tracker_stop = gp.buttons[1].pressed;
+            var gp_measuring_plus = gp.buttons[5].pressed;
+            var gp_measuring_minus = gp.buttons[7].pressed;
 
             let wy = y;
             if (typeof IS_QUAD_BIKE != 'undefined') {
@@ -144,6 +150,30 @@ function addNewPads() {
                 }
             }
 
+            if (gp_measuring_minus != is_gp_measuring_minus) {
+                is_gp_measuring_minus = gp_measuring_minus;
+                if (is_gp_measuring_minus) {
+                    simulateBracketRightDown();
+                    gamepad_simulate_key_repeat_interval = setInterval(simulateKeyRepeat, 30);
+                } else {
+                    simulateBracketRightUp();
+                    clearInterval(gamepad_simulate_key_repeat_interval);
+                    gamepad_simulate_key_repeat_interval = 0;
+                }
+            }
+
+            if (gp_measuring_plus != is_gp_measuring_plus) {
+                is_gp_measuring_plus = gp_measuring_plus;
+                if (is_gp_measuring_plus) {
+                    simulateBracketLeftDown();
+                    gamepad_simulate_key_repeat_interval = setInterval(simulateKeyRepeat, 30);
+                } else {
+                    simulateBracketLeftUp();
+                    clearInterval(gamepad_simulate_key_repeat_interval);
+                    gamepad_simulate_key_repeat_interval = 0;
+                }
+            }
+
             is_gp_tracker_stop_pressed = gp_tracker_stop;
             if (is_gp_tracker_stop_pressed) {
                 trackerStop();
@@ -194,6 +224,22 @@ function simulateSpacelDown() {
 function simulateSpacelUp() {
     simulateKeyEvent("keyup", 0, "Space", " ", 32, 32);
 
+}
+
+function simulateBracketLeftDown() {
+    simulateKeyEvent("keydown", 0, "BracketLeft", "[", 219, 219);
+}
+
+function simulateBracketLeftUp() {
+    simulateKeyEvent("keyup", 0, "BracketLeft", "[", 219, 219);
+}
+
+function simulateBracketRightDown() {
+    simulateKeyEvent("keydown", 0, "BracketRight", "]", 221, 221);
+}
+
+function simulateBracketRightUp() {
+    simulateKeyEvent("keyup", 0, "BracketRight", "]", 221, 221);
 }
 
 
@@ -262,3 +308,14 @@ function process() {
     requestAnimationFrame(process);
 }
 requestAnimationFrame(process);
+
+
+function simulateKeyRepeat() {
+    if (is_gp_measuring_minus) {
+        simulateBracketRightDown();
+    }
+
+    if (is_gp_measuring_plus) {
+        simulateBracketLeftDown();
+    }
+}
