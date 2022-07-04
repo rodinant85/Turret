@@ -1381,7 +1381,7 @@ button {
 }
 
 #errors_div {
-    background: rgba(250,120,120,0.45);
+    background: rgba(243,234,208,0.45);
     margin: auto;
     padding: 5px;
     border: 3px solid #ad2121;
@@ -1390,19 +1390,23 @@ button {
     right: 15%;
     top: 60%;
     text-align: right;
+    height: 20%;
 }
 
-#errors_textarea {
+#errors_p {
     background-color: #bbb;
     margin: 5px;
     width: -moz-available;
     width: -webkit-fill-available;
     font-size: x-large;
+    height: 80%;
 }
 
-#errors_close_button {
+#errors_close_button, #errors_clear_button {
     background-color: #bbb;
     margin: 5px;
+    margin-left: 6%;
+    padding: 4px;
 }
 
 
@@ -1420,4 +1424,14 @@ button {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) scale(var(--square-zoom));
+}
+
+#measuring_label {
+    position: absolute;
+    left: 50%;
+    top: 65%;
+    transform: translate(-50%, -50%);
+    background-color: #121212; 
+    color: #d1d1d1;
+    padding: 6px;
 }

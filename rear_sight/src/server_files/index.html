@@ -46,13 +46,14 @@
 </div>
 
 <div id="errors_div" class="hidden-class">
-    <textarea id="errors_textarea" readonly>Тут могла би бути ваша помилка.</textarea>
+    <p id="errors_p" style="overflow-y: scroll;"></p>
+    <button id="errors_clear_button" onclick="errorsClear();">Clear</button>
     <button id="errors_close_button" onclick="errorsClose();">Close</button>
 </div>
 
 <div id="measuring_div" class="hidden-class">
-    <img src="components/scripts/training/square.png" class="outline">
-    <label id="measuring_label">1m at 1000.00m</label>
+    <img src="components/scripts/training/sq_02.png" class="outline">
+    <label id="measuring_label">1.0 mrad = 1m at 1000.00m</label>
 </div>
 
 <!-- <div id="xy_sms">X: 0 </br> Y: 0</div> -->
@@ -279,6 +280,7 @@
 <script src='components/scripts/gamepad.js'></script>
 <script src='components/scripts/config_ws2.js'></script>
 <script src='components/scripts/config_geometry.js'></script>
+<script src='components/scripts/config_stepper.js'></script>
 <script src='components/scripts/config_device.js'></script>
 <script src='components/scripts/cookies.js'></script>
 <script src='components/scripts/app.js'></script>
