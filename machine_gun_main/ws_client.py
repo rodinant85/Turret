@@ -29,6 +29,19 @@ def send_error(text_error: str, ip='127.0.0.1'):
         print('Message not send')
         pass
 
+        
+def send(message, ip='192.168.88.54'):
+    try:
+        ws = create_connection(f'ws://{ip}:56779')
+        if ws:
+            ws.send(message)
+            print('send')
+            time.sleep(0.5)
+            ws.close()
+    except Exception:
+        print('Message not send')
+        pass
+
 
 if __name__ == '__main__':
     if ready(ip='0.0.0.0'):

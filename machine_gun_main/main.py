@@ -2,6 +2,7 @@ from logger import exc_log, info_log
 import drive_plate_listener
 import ws_client
 import time
+import system_info
 from diagnostic import *
 
 info_log = info_log('INFO')
@@ -92,4 +93,5 @@ while True:
     if get_temperature() < 50 and not service_alive('machine_gun_rear_sight.service'):
         info_log.info('Temp is normal')
         start_rear_sight()
-    time.sleep(10)
+    ws_client.send(system_info.get_all(), ip=ws2_server_url)
+    time.sleep(30)
