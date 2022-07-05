@@ -91,7 +91,7 @@ def parse_byte_to_str(serial_data: bytes):
     status_msg_type = 0x02
     settings_msg_type = 0x01
     if len(serial_data) == 12 and sum(serial_data[1:-1]) % 256 == serial_data[11]:
-        if serial_data[1] == status_msg_type:
+        if serial_data[1] == status_msg_type or serial_data[1] == 0x00: # delete serial_data[1] == 0x00 for prod
             stp_x = int.from_bytes(serial_data[2:6], byteorder='little', signed=True)
             stp_y = int.from_bytes(serial_data[6:10], byteorder='little', signed=True)
             sw = serial_data[10]
