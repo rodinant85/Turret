@@ -45,8 +45,8 @@ def system_monitoring():
                                  f' Drive plate Serial ERROR')
         if not service_alive('machine_gun_websocket.service'):
             exc_log.error('Websocket service is not alive')
-        if not ws_client.ready():
-            exc_log.error('Websocket is not response')
+        #if not ws_client.ready():
+        #    exc_log.error('Websocket is not response')
         time.sleep(10)
 
 

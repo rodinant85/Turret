@@ -4,6 +4,7 @@ import time
 import aioserial
 import os
 import websockets
+import system_info
 from bitarray import bitarray
 from websockets import WebSocketServerProtocol
 from threading import Timer
@@ -125,6 +126,12 @@ def parse_byte_to_str(serial_data: bytes):
         return None
 
 
+async def send_system_info(server):
+    while True:
+        await server.send_to_clients(system_info.get_all())
+        await asyncio.sleep(30)
+
+
 async def read_serial(server):
     while True:
         serial_data = await ser.read_async(size=12)
@@ -173,6 +180,7 @@ class Server:
             command_msg_header = '{"comm":["MV_HLD:'
             config_msg_header = '{"config":'
             error_msg_header = '{"error":'
+            info_msg_header = '{"system_info":'
             if message.startswith(command_msg_header):
                 self.t.cancel()
                 self.t = Timer(self.time_to_stop_motors, stop_motors)
@@ -194,17 +202,19 @@ class Server:
                 except Exception as e:
                     print(e)
 
-            if message.startswith(error_msg_header):
+            if message.startswith(error_msg_header or message.startswith(info_msg_header):
                 await self.send_to_clients(message)
 
 
 async def main():
     server = Server()
     start_server = websockets.serve(server.ws_handler, '', 56779, ping_interval=None)
-    task = asyncio.create_task(read_serial(server))
+    task_serial = asyncio.create_task(read_serial(server))
+    task_info = asyncio.create_task(send_system_info(server))
     async with start_server:
         await asyncio.Future()
-    await task
+    await task_serial
+    await task_info
 
 
 asyncio.run(main())
