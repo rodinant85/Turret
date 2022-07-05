@@ -378,8 +378,10 @@ function mouseCoordinateMessageSender() {
 }
 
 canvas.addEventListener('mousedown', function(e) {
-    if (colibration_started) {
-        return;
+    if ("colibration_started" in window) {
+        if (colibration_started) {
+            return;
+        }
     }
 
     isMouseDownMove = true;
@@ -451,8 +453,10 @@ canvas.addEventListener('mouseup', function (e) {
 });
 
 canvas.addEventListener('mousemove', function (e) {
-    if (colibration_started) {
-        return;
+    if ("colibration_started" in window) {
+        if (colibration_started) {
+            return;
+        }
     }
 
     if (isMouseDownMove) {

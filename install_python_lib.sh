@@ -10,3 +10,4 @@ sudo pip3 install websockets
 sudo pip3 install websocket-client
 sudo pip3 install aioserial
 sudo pip3 install bitarray
+sudo pip3 install psutil

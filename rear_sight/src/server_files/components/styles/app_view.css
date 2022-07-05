@@ -1388,9 +1388,9 @@ button {
     position: absolute;
     left: 15%;
     right: 15%;
-    top: 60%;
+    top: 55%;
     text-align: right;
-    height: 20%;
+    height: 27%;
 }
 
 #errors_p {
@@ -1399,14 +1399,18 @@ button {
     width: -moz-available;
     width: -webkit-fill-available;
     font-size: x-large;
-    height: 80%;
+    height: 70%;
+    padding: 8px;
+    text-align: left;
 }
 
 #errors_close_button, #errors_clear_button {
     background-color: #bbb;
     margin: 5px;
-    margin-left: 6%;
+    margin-right: 5%;
     padding: 4px;
+    position: relative;
+    bottom: 10px;
 }
 
 

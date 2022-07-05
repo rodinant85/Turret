@@ -4,6 +4,10 @@ let traker_target;
 
 let WS2_MESSAGES_LOG = false;
 
+let CIRC_MESS_BUFF_LENGTH = 100;
+let circ_mess_buf = new Array(CIRC_MESS_BUFF_LENGTH);
+let circ_mess_buf_had_number = 0;
+
 
 //For WS2_URI see file: config_ws2.js
 
@@ -1070,7 +1074,7 @@ $(function begin() {
 
     ws.onmessage = function(event) {
         console.log("Received from ws: " + event.data);
-        getAllFromData(event.data);
+        getAllFromWSData(event.data);
       };
 
     ws.onerror = function (error) {
@@ -1090,12 +1094,20 @@ $(function begin() {
 });
 
 
-function getAllFromData(data) {
+function getAllFromWSData(data) {
     try {
         const r = JSON.parse(data);
 
         if (typeof r["error"] != "undefined") {
             errorTextOut(r["error"]);
+        }
+
+        if (typeof r["info"] != "undefined") {
+            errorMessageAdd(r["info"]);
+        }
+
+        if (typeof r["system_info"] != "undefined") {
+            errorMessageAddList(r["info"]);
         }
 
         if (typeof r["tracker_target"] != "undefined") {
@@ -1116,23 +1128,23 @@ function getAllFromData(data) {
 }
 
 
-function getTrackerDelta2(data) {
-    try {
-        // examle message from tracker:
-        // {"tracker_target":{"t_dx":0.054355,"t_dy":0.131211}}
-        const r = JSON.parse(data);
-        //let dx = r["tracker_target"]["t_dx"];
-        //let dy = r["tracker_target"]["t_dy"];
+// function getTrackerDelta2(data) {
+//     try {
+//         // examle message from tracker:
+//         // {"tracker_target":{"t_dx":0.054355,"t_dy":0.131211}}
+//         const r = JSON.parse(data);
+//         //let dx = r["tracker_target"]["t_dx"];
+//         //let dy = r["tracker_target"]["t_dy"];
 
-        if (typeof r["error"] != "undefined") {
-            errorTextOut(r["error"]);
-        }
+//         if (typeof r["error"] != "undefined") {
+//             errorTextOut(r["error"]);
+//         }
 
-        traker_target = r["tracker_target"];
-    } catch(e) {
-        console.log(e);
-    }
-}
+//         traker_target = r["tracker_target"];
+//     } catch(e) {
+//         console.log(e);
+//     }
+// }
 
 
 let is_configs_sending_complete = false;
@@ -1213,7 +1225,7 @@ function connectSecondSocket() {
         if (WS2_MESSAGES_LOG) {
             console.log("Received from ws2: " + event.data);
         }
-        getMotorsData(event.data);
+        getAllFromWS2Data(event.data);
       };
 
     ws2.onerror = function () {
@@ -1229,7 +1241,7 @@ function ws2_send_once() {
 }
 
 
-function getMotorsData(mess) {
+function getAllFromWS2Data(mess) {
     try {
         const r = JSON.parse(mess);
 
@@ -1238,6 +1250,14 @@ function getMotorsData(mess) {
         if (typeof r["error"] != "undefined") {
             errorTextOut(r["error"]);
             return;
+        }
+
+        if (typeof r["info"] != "undefined") {
+            errorMessageAdd(r["info"]);
+        }
+
+        if (typeof r["system_info"] != "undefined") {
+            errorMessageAddList(r["system_info"]);
         }
 
         // mess example
@@ -1624,7 +1644,60 @@ function errorsShow() {
 function errorTextOut(mes) {
     errorsShow();
     //document.getElementById("errors_textarea").innerText = mes;
-    document.getElementById("errors_p").innerHTML += '<span style="color: darkred;">' + mes + '</span><br>'
+    //document.getElementById("errors_p").innerHTML += '<span style="color: darkred;">' + mes + '</span><br>';
+    let st = '<span style="color: darkred;">' + mes + '</span><br>';
+    circMessBuffAdd(st);
+    circMessBuffOut();
+    errorScrollDown();
+}
+
+function errorMessageAdd(mes) {
+    //document.getElementById("errors_p").innerHTML += '<span style="color: black;">' + mes + '</span><br>';
+    let st = '<span style="color: black;">' + mes + '</span><br>';
+    circMessBuffAdd(st);
+    circMessBuffOut();
+    errorScrollDown();
+}
+
+function errorMessageAddList(list) {
+    Object.keys(list).forEach(function(key) {
+        errorMessageAdd("" + key + " : " + list[key]);
+    });
+}
+
+function errorScrollDown() {
+    try {
+        let paragraph = document.getElementById("errors_p");
+        paragraph.scrollTop = paragraph.scrollHeight;        
+    } catch (e) {
+
+    }
+}
+
+function circMessBuffAdd(st) {
+    circ_mess_buf[circ_mess_buf_had_number] = st;
+    circ_mess_buf_had_number += 1;
+    if (circ_mess_buf_had_number >= CIRC_MESS_BUFF_LENGTH) {
+        circ_mess_buf_had_number -= CIRC_MESS_BUFF_LENGTH;
+    }
+}
+
+function circMessBuffOut() {
+    let p_obj = document.getElementById("errors_p");
+    p_obj.innerHTML = "";
+
+    let h = circ_mess_buf_had_number;
+    for (let sh = 0; sh < CIRC_MESS_BUFF_LENGTH; sh++) {
+        let i = h + sh;
+        if (i >= CIRC_MESS_BUFF_LENGTH) {
+            i -= CIRC_MESS_BUFF_LENGTH;
+        }
+        if (typeof circ_mess_buf[i] != "undefined") {
+            if (circ_mess_buf[i] != null) {
+                p_obj.innerHTML += circ_mess_buf[i];
+            }
+        }
+    }
 }
 
 
