@@ -47,68 +47,82 @@ def parse_speed_msg_to_bytes(message: str):
         string_x, string_y = message.strip('{"comm":["MV_HLD:DX:').strip('"]}').split(":DY:")
         float_x = float(string_x)
         float_y = float(string_y)
-    except ValueError as ve:
-        print(ve)
+
+        speed_on_x = int(round(float_x / zooming_step_coefficient))
+        speed_on_y = int(round(float_y / zooming_step_coefficient))
+
+        dir_x = 0 if speed_on_x > 0 else 1
+        dir_y = 0 if speed_on_y > 0 else 1
+
+        speed_on_x = 255 if abs(speed_on_x) > 255 else abs(speed_on_x)
+        speed_on_y = 255 if abs(speed_on_y) > 255 else abs(speed_on_y)
+
+        speed_direction = int.from_bytes(bitarray([0, 0, 0, 0, 0, 0, dir_y, dir_x]), "little")
+
+        _msg = [msg_header, msg_type, speed_direction, speed_on_x, speed_on_y, 0, 0, 0, 0, 0, 0]
+        crc8 = sum(_msg[1:]) % 256
+        _msg.append(crc8)
+        return _msg
+
+    except Exception as e:
+        print(e)
         return None
-
-    speed_on_x = int(round(float_x / zooming_step_coefficient))
-    speed_on_y = int(round(float_y / zooming_step_coefficient))
-
-    dir_x = 0 if speed_on_x > 0 else 1
-    dir_y = 0 if speed_on_y > 0 else 1
-
-    speed_on_x = 255 if abs(speed_on_x) > 255 else abs(speed_on_x)
-    speed_on_y = 255 if abs(speed_on_y) > 255 else abs(speed_on_y)
-
-    speed_direction = int.from_bytes(bitarray([0, 0, 0, 0, 0, 0, dir_y, dir_x]), "little")
-
-    _msg = [msg_header, msg_type, speed_direction, speed_on_x, speed_on_y, 0, 0, 0, 0, 0, 0]
-    crc8 = sum(_msg[1:]) % 256
-    _msg.append(crc8)
-    return _msg
 
 
 def parse_config_msg_to_bytes(message: str):
     msg_header = 0xff
     msg_type = 0x01
 
-    # message example
-    # '{"config":{"OX_MAX_FREQ":5000;"OY_MAX_FREQ":6000}}'
-    max_freq_x, max_freq_y = message.strip('{"config":{"OX_MAX_FREQ":').strip('}}').split(';"OY_MAX_FREQ":')
+    try:
+        # message example
+        # '{"config":{"OX_MAX_FREQ":5000;"OY_MAX_FREQ":6000}}'
+        max_freq_x, max_freq_y = message.strip('{"config":{"OX_MAX_FREQ":').strip('}}').split(';"OY_MAX_FREQ":')
 
-    max_freq_x_hi = int(max_freq_x) // 256
-    max_freq_x_lo = int(max_freq_x) % 256
-    max_freq_y_hi = int(max_freq_y) // 256
-    max_freq_y_lo = int(max_freq_y) % 256
+        max_freq_x_hi = int(max_freq_x) // 256
+        max_freq_x_lo = int(max_freq_x) % 256
+        max_freq_y_hi = int(max_freq_y) // 256
+        max_freq_y_lo = int(max_freq_y) % 256
 
-    _msg = [msg_header, msg_type, max_freq_x_lo, max_freq_x_hi, max_freq_y_lo, max_freq_y_hi, 0, 0, 0, 0, 0]
-    crc8 = sum(_msg[1:]) % 256
-    _msg.append(crc8)
-    return _msg
+        _msg = [msg_header, msg_type, max_freq_x_lo, max_freq_x_hi, max_freq_y_lo, max_freq_y_hi, 0, 0, 0, 0, 0]
+        crc8 = sum(_msg[1:]) % 256
+        _msg.append(crc8)
+        return _msg
+
+    except Exception as e:
+        print(e)
+        return None
 
 
 def parse_byte_to_str(serial_data: bytes):
     status_msg_type = 0x02
     settings_msg_type = 0x01
     if len(serial_data) == 12 and sum(serial_data[1:-1]) % 256 == serial_data[11]:
-        if serial_data[1] == status_msg_type or serial_data[1] == 0x00: # delete serial_data[1] == 0x00 for prod
-            stp_x = int.from_bytes(serial_data[2:6], byteorder='little', signed=True)
-            stp_y = int.from_bytes(serial_data[6:10], byteorder='little', signed=True)
-            sw = serial_data[10]
-            sw_x_max = 1 if ((sw & 0b00000001) != 0) else 0
-            sw_x_min = 1 if ((sw & 0b00000010) != 0) else 0
-            sw_y_max = 1 if ((sw & 0b00000100) != 0) else 0
-            sw_y_min = 1 if ((sw & 0b00001000) != 0) else 0
-            msg = '{"resp":{"STP_X":' + str(stp_x) + ',"STP_Y":' + str(stp_y) + ',"SW_X_MAX":' + str(sw_x_max) + \
-                  ',"SW_X_MIN":' + str(sw_x_min) + ',"SW_Y_MAX":' + str(sw_y_max) + ',"SW_Y_MIN":' + \
-                  str(sw_y_min) + '}}'
-            return msg
+        if serial_data[1] == status_msg_type:
+            try:
+                stp_x = int.from_bytes(serial_data[2:6], byteorder='little', signed=True)
+                stp_y = int.from_bytes(serial_data[6:10], byteorder='little', signed=True)
+                sw = serial_data[10]
+                sw_x_max = 1 if ((sw & 0b00000001) != 0) else 0
+                sw_x_min = 1 if ((sw & 0b00000010) != 0) else 0
+                sw_y_max = 1 if ((sw & 0b00000100) != 0) else 0
+                sw_y_min = 1 if ((sw & 0b00001000) != 0) else 0
+                msg = '{"resp":{"STP_X":' + str(stp_x) + ',"STP_Y":' + str(stp_y) + ',"SW_X_MAX":' + str(sw_x_max) + \
+                      ',"SW_X_MIN":' + str(sw_x_min) + ',"SW_Y_MAX":' + str(sw_y_max) + ',"SW_Y_MIN":' + \
+                      str(sw_y_min) + '}}'
+                return msg
+            except Exception as e:
+                print(e)
+                return None
 
         if serial_data[1] == settings_msg_type:
-            max_freq_x = int.from_bytes(serial_data[2:4], byteorder='little', signed=False)
-            max_freq_y = int.from_bytes(serial_data[4:6], byteorder='little', signed=False)
-            msg = '{"confirm":{"OX_MAX_FREQ":' + str(max_freq_x) + ',"OY_MAX_FREQ":' + str(max_freq_y) + '}}'
-            return msg
+            try:
+                max_freq_x = int.from_bytes(serial_data[2:4], byteorder='little', signed=False)
+                max_freq_y = int.from_bytes(serial_data[4:6], byteorder='little', signed=False)
+                msg = '{"confirm":{"OX_MAX_FREQ":' + str(max_freq_x) + ',"OY_MAX_FREQ":' + str(max_freq_y) + '}}'
+                return msg
+            except Exception as e:
+                print(e)
+                return None
 
     else:
         ser.reset_input_buffer()
@@ -175,21 +189,23 @@ class Server:
                 self.t = Timer(self.time_to_stop_motors, stop_motors)
                 self.t.start()
                 b = parse_speed_msg_to_bytes(message)
-                bts = bytes(b)
-                try:
-                    await ser.write_async(bts)
-                    # await asyncio.sleep(0.05)
-                except Exception as e:
-                    print(e)
+                if b is not None:
+                    bts = bytes(b)
+                    try:
+                        await ser.write_async(bts)
+                        # await asyncio.sleep(0.05)
+                    except Exception as e:
+                        print(e)
 
             if message.startswith(config_msg_header):
                 b = parse_config_msg_to_bytes(message)
-                bts = bytes(b)
-                try:
-                    await ser.write_async(bts)
-                    # await asyncio.sleep(0.05)
-                except Exception as e:
-                    print(e)
+                if b is not None:
+                    bts = bytes(b)
+                    try:
+                        await ser.write_async(bts)
+                        # await asyncio.sleep(0.05)
+                    except Exception as e:
+                        print(e)
 
             if message.startswith(error_msg_header):
                 await self.send_to_clients(message)
