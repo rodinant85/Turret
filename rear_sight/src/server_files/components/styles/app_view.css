@@ -1381,36 +1381,28 @@ button {
 }
 
 #errors_div {
-    background: rgba(243,234,208,0.45);
+    background: rgba(250,120,120,0.45);
     margin: auto;
     padding: 5px;
     border: 3px solid #ad2121;
     position: absolute;
     left: 15%;
     right: 15%;
-    top: 55%;
+    top: 60%;
     text-align: right;
-    height: 27%;
 }
 
-#errors_p {
+#errors_textarea {
     background-color: #bbb;
     margin: 5px;
     width: -moz-available;
     width: -webkit-fill-available;
     font-size: x-large;
-    height: 70%;
-    padding: 8px;
-    text-align: left;
 }
 
-#errors_close_button, #errors_clear_button {
+#errors_close_button {
     background-color: #bbb;
     margin: 5px;
-    margin-right: 5%;
-    padding: 4px;
-    position: relative;
-    bottom: 10px;
 }
 
 

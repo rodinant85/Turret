@@ -61,23 +61,12 @@ ReceiverEntry *create_receiver_entry(seasocks::WebSocket *connection) {
     receiver_entry->pipeline =
             gst_parse_launch("webrtcbin name=webrtcbin  "
                              "videotestsrc pattern=white name=ocvvideosrc "
-//                             "videotestsrc pattern=white "
                              "! video/x-raw,width=" STR_WIDTH_STREAM_FRAME ",height=" STR_HEIGHT_STREAM_FRAME ",framerate=" STR_FRAMERATE ",format=BGRA "
-//                             "! videoconvert name=ocvvideosrc "
-//                             "! video/x-raw,format=BGRA "
                              "! videoconvert "
                              "! queue max-size-buffers=1 "
-//                             "! x264enc speed-preset=ultrafast tune=zerolatency key-int-max=15 "
                              "! vp8enc deadline=1 threads=4 cq-level=40 buffer-size=500 end-usage=1 min-quantizer=30 max-quantizer=30 lag-in-frames=1 "
-//                             "! vp8enc static-threshold=6000 deadline=1 threads=4 cq-level=30 buffer-size=500 end-usage=2 min-quantizer=30 max-quantizer=30 lag-in-frames=0 "
-//                             "! vp8enc deadline=1 threads=4 cq-level=40 buffer-size=500 end-usage=2 min-quantizer=30 max-quantizer=30 lag-in-frames=0 "
-//                             "! vp8enc deadline=1 threads=4 cq-level=40 buffer-size=500 end-usage=1 min-quantizer=30 max-quantizer=60 lag-in-frames=0 "
-//                             "! queue max-size-time=100000000 "
-//                             "! rtph264pay config-interval=10 name=payloader pt=96 "
                              "! rtpvp8pay name=payloader pt=96 "
                              "! application/x-rtp,media=video,encoding-name=VP8,payload=96 "
-//                             "! capssetter caps=\"application/x-rtp,packetization-mode=0,sprop-parameter-sets=0,KO4CXLA=0,profile-level-id=(string)42c01f,media=(string)video,encoding-name=(string)H264,payload=(int)96\" "
-//                             "! capssetter caps=\"application/x-rtp,profile-level-id=(string)42c01f,media=(string)video,encoding-name=(string)H264,payload=(int)96\" "
                              "! webrtcbin. ", &error);
 #endif //RASPBERRY_PI
 
@@ -152,8 +141,7 @@ void destroy_receiver_entry(gpointer receiver_entry_ptr) {
         gst_object_unref(GST_OBJECT (receiver_entry->pipeline));
     }
 
-    // if (receiver_entry->connection != NULL)
-    //    g_object_unref (G_OBJECT (receiver_entry->connection));
+
     if (receiver_entry->ocvvideosrc != NULL)
         g_object_unref(G_OBJECT((receiver_entry->ocvvideosrc)));
 
