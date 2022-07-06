@@ -59,10 +59,7 @@ int RearSightProcessor::on_zoom_plus_processor() {
     m_CROPPED_WIDTH = n_CROPPED_WIDTH;
     m_CROPPED_HEIGHT = n_CROPPED_HEIGHT;
 
-//    std::cout << "*******************************************************\n";
-//    std::cout << "+ CROPP             x=" << m_CROPPED_X << " y=" << m_CROPPED_Y << " w=" << m_CROPPED_WIDTH << " h=" << m_CROPPED_HEIGHT << "\n";
-//    std::cout << "+ Center            x=" << _roiCenterPoint.first << " y=" << _roiCenterPoint.second << "\n";
-//    std::cout << "+ actual ROI center x=" << m_CROPPED_X + (m_CROPPED_WIDTH / 2) << " y=" << m_CROPPED_Y + (m_CROPPED_HEIGHT / 2) << "\n";
+
     // fixing zooming center
     if (m_CROPPED_X + (m_CROPPED_WIDTH / 2) < _roiCenterPoint.first)
         m_CROPPED_X += _roiCenterPoint.first - (m_CROPPED_X + (m_CROPPED_WIDTH / 2));
@@ -85,10 +82,7 @@ int RearSightProcessor::on_zoom_plus_processor() {
 
 int RearSightProcessor::on_zoom_minus_processor() {
     _delegate = DelegateWS::getInstance();
-//    std::cout << "//////////////////////////////////////////////////////////\n";
-//    std::cout << "- CROPP             x=" << m_CROPPED_X << " y=" << m_CROPPED_Y << " w=" << m_CROPPED_WIDTH << " h=" << m_CROPPED_HEIGHT << "\n";
-//    std::cout << "- Center            x=" << _roiCenterPoint.first << " y=" << _roiCenterPoint.second << "\n";
-//    std::cout << "- actual ROI center x=" << m_CROPPED_X + (m_CROPPED_WIDTH / 2) << " y=" << m_CROPPED_Y + (m_CROPPED_HEIGHT / 2) << "\n";
+
     if (m_CURRENT_ZOOM_SIZE == MAX_ZOOM_COEFFICIENT)
         return ZOOM_OP_UNSUCCESS;
     if (m_CURRENT_ZOOM_SIZE + ZOOMING_STEP_COEFFICIENT > MAX_ZOOM_COEFFICIENT) {

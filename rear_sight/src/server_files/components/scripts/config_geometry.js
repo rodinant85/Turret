@@ -6,4 +6,4 @@ let SCREEN_WIDTH_MM = 296;
 let SCREEN_HEIGHT_MM = 154;
 
 // This is the width of the square. It's not the width of the image.
-let SQUARE_IMAGE_WIDTH_PX = 200;
+let SQUARE_IMAGE_WIDTH_PX = 64;

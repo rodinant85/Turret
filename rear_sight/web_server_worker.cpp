@@ -57,12 +57,8 @@ void WebServerWorker::startServer() {
         // added a socket handler
         ws_server->addWebSocketHandler("/chart", handler);
         // starting webserver
-//        ws_server->serve(pathToWebFiles.c_str(), 56778);
         ws_server->serve("src/server_files", 56778);
     });
-
-    // starting a Holder Controller
-    _holderController = std::make_shared<HolderController>();
 }
 
 void WebServerWorker::processServer() {
@@ -116,8 +112,6 @@ void WebServerWorker::handleEventWS(std::shared_ptr<EventWS> event) {
                }
                 break;
             case EVENT_CLIENT_DISCONNECTED:
-//            turtle_manager->say_server_leave();
-//                _masterTurtleManager->command_server_leave();
                 break;
         }
     }
@@ -235,26 +229,7 @@ void WebServerWorker::handleHolderEvents(std::shared_ptr<EventWS> eventWs) {
 
     switch (eventWs->getEventID()) {
         case EVENT_MOVE_HOLDER_IN_POS:
-            xSpeedPer = eventWs->getDataFirst();
-            ySpeedPer = eventWs->getDataSecond() * 3.0 / 4.0;
-            xSpeedPer *= zooming;
-            ySpeedPer *= zooming;
-            xSpeedPer *= (double) HolderMovementConst::X_MAX_SPEED;
-            ySpeedPer *= (double) HolderMovementConst::Y_MAX_SPEED;
-            if (ySpeedPer > 0) {
-                if (xSpeedPer > 0)
-                    direction = HolderMovementDirection::UP_RIGHT;
-                else
-                    direction = HolderMovementDirection::UP_LEFT;
-            } else {
-                if (xSpeedPer > 0)
-                    direction = HolderMovementDirection::DOWN_RIGHT;
-                else
-                    direction = HolderMovementDirection::DOWN_LEFT;
-            }
-            _holderController->setMoveSpeed((uint8_t) fabs(xSpeedPer),
-                                            (uint8_t) fabs(ySpeedPer),
-                                            direction);
+            // this eventdont't need in this version
             break;
         case EVENT_HOLDER_FUSE_UP:
             std::cout << "# HOLDER # -> FUSE IS UP\n";
@@ -282,9 +257,6 @@ void WebServerWorker::handleHolderEvents(std::shared_ptr<EventWS> eventWs) {
             message += COMMAND_HOLDER_DONE_FIRE;
             message += "\"]}";
             handler->sendValuesJSON(message);
-
-            _holderController->fireOn((uint8_t) eventWs->getData());
-
             break;
         case EVENT_CAMERA_DELTA: {
             std::cout << "# CAMERA CORRECT " << "X:" << eventWs->getDataFirst() << "Y:" << eventWs->getDataSecond()
@@ -293,8 +265,6 @@ void WebServerWorker::handleHolderEvents(std::shared_ptr<EventWS> eventWs) {
             std::string s_dy = std::to_string(eventWs->getDataSecond());
             message = "{\"tracker_target\":{\"t_dx\":" + s_dx + ",\"t_dy\":" + s_dy + "}}";
             handler->sendValuesJSON(message);
-
-            _holderController->fireOn((uint8_t) eventWs->getData());
         }
             break;
 

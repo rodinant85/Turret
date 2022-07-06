@@ -72,12 +72,6 @@ add_executable(rear_sight
         process_camera/rear_sight_webrtc_manipulation.h
         web_server/web_server_events/holder_commands.h
 
-###      this is the source code for working with a holder controller via a SPI interface
-        holder_processing/spi_library/spi.h
-        holder_processing/spi_library/spi.cpp
-        holder_processing/holder_controller.h
-        holder_processing/holder_controller.cpp
-
 ###      this is own logging system
         logging/LOG.h
         )
@@ -102,8 +96,8 @@ target_compile_definitions(rear_sight PRIVATE RES_720P)
 
 ###       this compile definition sets fro video-stream default framerate
 #target_compile_definitions(rear_sight PRIVATE FRAMERATE_5)
-target_compile_definitions(rear_sight PRIVATE FRAMERATE_15)
-#target_compile_definitions(rear_sight PRIVATE FRAMERATE_30)
+#target_compile_definitions(rear_sight PRIVATE FRAMERATE_15)
+target_compile_definitions(rear_sight PRIVATE FRAMERATE_30)
 #target_compile_definitions(rear_sight PRIVATE FRAMERATE_60)
 
 ###       Adding to the project the 'seasocks' library for the WebServer which works as WebSocket server

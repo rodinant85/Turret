@@ -212,13 +212,6 @@ void CameraThread::processCameraThread() {
 void CameraThread::startTracking(int x, int y) {
     std::cout << "start x: " << x << " start y: " << y << "\n";
     cv::Mat init_frame = getLastMat();
-    //std::cout << "last math: " << init_frame.size[0] << " : "<< init_frame.size[1] << "\n";
-    //float m_frame = std::max(init_frame.size[0], init_frame.size[1]);
-    //int xp;
-    //int yp;
-    //xp = (init_frame.size[1] / 2) + (x*m_frame);
-    //yp = (init_frame.size[0] / 2) + (y*m_frame);
-    //std::cout << "xp: " << xp << " yp: " << yp << "\n";
     _bb = cv::Rect(x-50, y-50, 100, 100);
     _tracker->init(init_frame, _bb);
     cv::rectangle(init_frame, _bb, cv::Scalar(0, 255, 0), 1, cv::LINE_8, 0);

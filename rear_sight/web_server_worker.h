@@ -18,7 +18,6 @@
 #include "web_server/lib_my_event_handler/handler_ws.h"
 
 #include "process_camera/rear_sight_webrtc_manipulation.h"
-#include "holder_processing/holder_controller.h"
 
 /** This is the class WebServerWorker, which extends the abstract class HandlerWS (which are a part of my own handling system)
  * it used for handling interrupts from the WebServer, and works width hardware drivers*/
@@ -85,14 +84,9 @@ private:
     /** The field with MyHandler - this is my handler for events from web-clients, but it handle only events:
      * onConnection, onDisconnecting, onMessage, and only in the web-server thread*/
     shared_ptr<MyHandler> handler;
-//    /**
-//     * @brief this is a path to the web-files folder
-//     */
-//    std::string pathToWebFiles;
 
     /** This field contains an object of HandlerController class,
      * that used for handling Holder events*/
-    std::shared_ptr<HolderController> _holderController;
 };
 
 
