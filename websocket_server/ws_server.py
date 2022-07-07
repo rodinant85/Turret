@@ -218,8 +218,7 @@ async def main():
     task_info = asyncio.create_task(send_system_info(server))
     async with start_server:
         await asyncio.Future()
-    await task_serial
-    await task_info
+    await asyncio.gather(task_serial, task_info)
 
 
 asyncio.run(main())
