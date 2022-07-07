@@ -97,7 +97,8 @@ target_compile_definitions(rear_sight PRIVATE RES_720P)
 ###       this compile definition sets fro video-stream default framerate
 #target_compile_definitions(rear_sight PRIVATE FRAMERATE_5)
 #target_compile_definitions(rear_sight PRIVATE FRAMERATE_15)
-target_compile_definitions(rear_sight PRIVATE FRAMERATE_30)
+target_compile_definitions(rear_sight PRIVATE FRAMERATE_20)
+#target_compile_definitions(rear_sight PRIVATE FRAMERATE_30)
 #target_compile_definitions(rear_sight PRIVATE FRAMERATE_60)
 
 ###       Adding to the project the 'seasocks' library for the WebServer which works as WebSocket server

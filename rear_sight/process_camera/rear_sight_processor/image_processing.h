@@ -13,6 +13,10 @@
 #define STR_FRAMERATE           "15/1"
 #endif //FRAMERATE_15
 
+#ifdef FRAMERATE_20
+#define STR_FRAMERATE           "20/1"
+#endif //FRAMERATE_20
+
 #ifdef FRAMERATE_30
 #define STR_FRAMERATE           "30/1"
 #endif //FRAMERATE_30
