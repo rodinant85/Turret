@@ -15,8 +15,9 @@ var is_gp_space_pressed = false;
 var is_gp_zoom_in_pressed = false;
 var is_gp_zoom_out_pressed = false;
 var is_gp_tracker_stop_pressed = false;
-var is_gp_measuring_plus = false;
-var is_gp_measuring_minus = false;
+var is_gp_measuring_plus_pressed = false;
+var is_gp_measuring_minus_pressed = false;
+var is_gp_set_distance_pressed = false;
 
 var gamepad_simulate_key_repeat_interval = 0;
 
@@ -74,6 +75,7 @@ function addNewPads() {
             let gp_tracker_stop = gp.buttons[1].pressed;
             var gp_measuring_plus = gp.buttons[5].pressed;
             var gp_measuring_minus = gp.buttons[7].pressed;
+            var gp_set_distance = gp.buttons[2].pressed;
 
             let wy = y;
             if (typeof IS_QUAD_BIKE != 'undefined') {
@@ -150,9 +152,9 @@ function addNewPads() {
                 }
             }
 
-            if (gp_measuring_minus != is_gp_measuring_minus) {
-                is_gp_measuring_minus = gp_measuring_minus;
-                if (is_gp_measuring_minus) {
+            if (gp_measuring_minus != is_gp_measuring_minus_pressed) {
+                is_gp_measuring_minus_pressed = gp_measuring_minus;
+                if (is_gp_measuring_minus_pressed) {
                     simulateBracketRightDown();
                     gamepad_simulate_key_repeat_interval = setInterval(simulateKeyRepeat, 30);
                 } else {
@@ -162,15 +164,24 @@ function addNewPads() {
                 }
             }
 
-            if (gp_measuring_plus != is_gp_measuring_plus) {
-                is_gp_measuring_plus = gp_measuring_plus;
-                if (is_gp_measuring_plus) {
+            if (gp_measuring_plus != is_gp_measuring_plus_pressed) {
+                is_gp_measuring_plus_pressed = gp_measuring_plus;
+                if (is_gp_measuring_plus_pressed) {
                     simulateBracketLeftDown();
                     gamepad_simulate_key_repeat_interval = setInterval(simulateKeyRepeat, 30);
                 } else {
                     simulateBracketLeftUp();
                     clearInterval(gamepad_simulate_key_repeat_interval);
                     gamepad_simulate_key_repeat_interval = 0;
+                }
+            }
+
+            if (gp_set_distance != is_gp_set_distance_pressed) {
+                is_gp_set_distance_pressed = gp_set_distance;
+                if (is_gp_set_distance_pressed) {
+                    simulateEqualDown();
+                } else {
+                    simulateEqualUp();
                 }
             }
 
@@ -242,6 +253,14 @@ function simulateBracketRightUp() {
     simulateKeyEvent("keyup", 0, "BracketRight", "]", 221, 221);
 }
 
+function simulateEqualDown() {
+    simulateKeyEvent("keydown", 0, "Equal", "=", 187, 187);
+}
+
+function simulateEqualUp() {
+    simulateKeyEvent("keyup", 0, "Equal", "=", 187, 187);
+}
+
 
 function simulateKeyEvent(eventType, charCode, code, key, keyCode, which) {
     window.document.body.dispatchEvent(new KeyboardEvent(eventType, 
@@ -311,11 +330,11 @@ requestAnimationFrame(process);
 
 
 function simulateKeyRepeat() {
-    if (is_gp_measuring_minus) {
+    if (is_gp_measuring_minus_pressed) {
         simulateBracketRightDown();
     }
 
-    if (is_gp_measuring_plus) {
+    if (is_gp_measuring_plus_pressed) {
         simulateBracketLeftDown();
     }
 }

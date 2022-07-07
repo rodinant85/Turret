@@ -4,6 +4,10 @@ let traker_target;
 
 let WS2_MESSAGES_LOG = false;
 
+let CIRC_MESS_BUFF_LENGTH = 100;
+let circ_mess_buf = new Array(CIRC_MESS_BUFF_LENGTH);
+let circ_mess_buf_had_number = 0;
+
 
 //For WS2_URI see file: config_ws2.js
 
@@ -1070,7 +1074,7 @@ $(function begin() {
 
     ws.onmessage = function(event) {
         console.log("Received from ws: " + event.data);
-        getAllFromData(event.data);
+        getAllFromWSData(event.data);
       };
 
     ws.onerror = function (error) {
@@ -1090,12 +1094,20 @@ $(function begin() {
 });
 
 
-function getAllFromData(data) {
+function getAllFromWSData(data) {
     try {
         const r = JSON.parse(data);
 
         if (typeof r["error"] != "undefined") {
             errorTextOut(r["error"]);
+        }
+
+        if (typeof r["info"] != "undefined") {
+            errorMessageAdd(r["info"]);
+        }
+
+        if (typeof r["system_info"] != "undefined") {
+            errorMessageAddList(r["info"]);
         }
 
         if (typeof r["tracker_target"] != "undefined") {
@@ -1116,24 +1128,26 @@ function getAllFromData(data) {
 }
 
 
-function getTrackerDelta2(data) {
-    try {
-        // examle message from tracker:
-        // {"tracker_target":{"t_dx":0.054355,"t_dy":0.131211}}
-        const r = JSON.parse(data);
-        //let dx = r["tracker_target"]["t_dx"];
-        //let dy = r["tracker_target"]["t_dy"];
+// function getTrackerDelta2(data) {
+//     try {
+//         // examle message from tracker:
+//         // {"tracker_target":{"t_dx":0.054355,"t_dy":0.131211}}
+//         const r = JSON.parse(data);
+//         //let dx = r["tracker_target"]["t_dx"];
+//         //let dy = r["tracker_target"]["t_dy"];
 
-        if (typeof r["error"] != "undefined") {
-            errorTextOut(r["error"]);
-        }
+//         if (typeof r["error"] != "undefined") {
+//             errorTextOut(r["error"]);
+//         }
 
-        traker_target = r["tracker_target"];
-    } catch(e) {
-        console.log(e);
-    }
-}
+//         traker_target = r["tracker_target"];
+//     } catch(e) {
+//         console.log(e);
+//     }
+// }
 
+
+let is_configs_sending_complete = false;
 
 function stopIntervalHandler() {
     //clearInterval(stopInterval);
@@ -1146,7 +1160,7 @@ function stopIntervalHandler() {
             ((typeof(mouseMovingInterval) == "undefined") || (mouseMovingInterval == 0)) &&
             ((typeof(colibration_interval) == "undefined") || (colibration_interval == 0))) {
 
-                let st = "{\"comm\":[\"MV_HLD:DX:0:DY:0\"]}";
+                let st = '{"comm":["MV_HLD:DX:0:DY:0"]}';
 
                 if (typeof(traker_target) != "undefined") {
                     let dx = traker_target["t_dx"];
@@ -1155,7 +1169,7 @@ function stopIntervalHandler() {
                     dx = Math.floor(dx * 1000) / 1000;
                     dy = Math.floor(dy * 1000) / 1000;
 
-                    st = "{\"comm\":[\"MV_HLD:DX:" + dx + ":DY:" + dy + "\"]}"; 
+                    st = '{"comm":["MV_HLD:DX:' + dx + ':DY:' + dy + '"]}'; 
 
                     traker_target = undefined;
                 } else {
@@ -1163,8 +1177,17 @@ function stopIntervalHandler() {
 
                     } else {
                         if (GAMEPAD_PRESENT) { 
-                            st = "{\"comm\":[\"MV_HLD:DX:" + gamepad_axe_x + ":DY:" + gamepad_axe_y + "\"]}"; 
+                            st = '{"comm":["MV_HLD:DX:' + gamepad_axe_x + ':DY:' + gamepad_axe_y + '"]}'; 
                         }
+                    }
+                }
+
+                if (typeof IS_SEND_CONFIGS_NEEDED != "undefined") {
+                    if (IS_SEND_CONFIGS_NEEDED && !is_configs_sending_complete) {
+                        let xmf = OX_STEPPER_MAX_STEPS_FREQUENCEY;
+                        let ymf = OY_STEPPER_MAX_STEPS_FREQUENCEY;
+
+                        st = '{"config":{"OX_MAX_FREQ":' + xmf + ';"OY_MAX_FREQ":' + ymf + '}}'; 
                     }
                 }
 
@@ -1202,7 +1225,7 @@ function connectSecondSocket() {
         if (WS2_MESSAGES_LOG) {
             console.log("Received from ws2: " + event.data);
         }
-        getMotorsPosition(event.data);
+        getAllFromWS2Data(event.data);
       };
 
     ws2.onerror = function () {
@@ -1218,17 +1241,27 @@ function ws2_send_once() {
 }
 
 
-function getMotorsPosition(mess) {
+function getAllFromWS2Data(mess) {
     try {
-        // mess example
-        // {"resp":{"STP_X":-3509,"STP_Y":955,"SW_X_MAX":0,"SW_X_MIN":0,"SW_Y_MAX":0,"SW_Y_MIN":0}}
         const r = JSON.parse(mess);
 
+        // mess example
+        // {"error":"Fatal error on line 48!"}
         if (typeof r["error"] != "undefined") {
             errorTextOut(r["error"]);
             return;
         }
 
+        if (typeof r["info"] != "undefined") {
+            errorMessageAdd(r["info"]);
+        }
+
+        if (typeof r["system_info"] != "undefined") {
+            errorMessageAddList(r["system_info"]);
+        }
+
+        // mess example
+        // {"resp":{"STP_X":-3509,"STP_Y":955,"SW_X_MAX":0,"SW_X_MIN":0,"SW_Y_MAX":0,"SW_Y_MIN":0}}
         if (typeof r["resp"] != "undefined") {
             x_position_steps = r.resp.STP_X;
             y_position_steps = r.resp.STP_Y;
@@ -1319,6 +1352,18 @@ function getMotorsPosition(mess) {
             x_angle_position_degree = angleConstraint(x_angle_position_degree);
             y_angle_position_degree = angleConstraint(y_angle_position_degree);
         }
+
+        // mess example
+        // {"confirm":{"OX_MAX_FREQ":6000;"OY_MAX_FREQ":5000}}
+        if (typeof r["confirm"] != "undefined") {
+            // check confirmation
+            if (r["confirm"]["OX_MAX_FREQ"] == OX_STEPPER_MAX_STEPS_FREQUENCEY &&
+            r["confirm"]["OY_MAX_FREQ"] == OY_STEPPER_MAX_STEPS_FREQUENCEY) {
+                is_configs_sending_complete = true;
+            }
+            return;
+        }
+
     } catch(e) {
         console.log(e);
     }
@@ -1543,7 +1588,7 @@ function doColebration() {
 }
 
 function step(_dx, _dy) {
-    let st = "{\"comm\":[\"MV_HLD:DX:" + _dx + ":DY:" + _dy + "\"]}"; 
+    let st = '{"comm":["MV_HLD:DX:' + _dx + ':DY:' + _dy + '"]}'; 
     ws.send(st);
     ws2.send(st); 
 }
@@ -1586,6 +1631,11 @@ function errorsClose() {
 }
 
 
+function errorsClear() {
+    document.getElementById("errors_p").innerHTML = "";
+}
+
+
 function errorsShow() {
     document.getElementById("errors_div").classList.remove("hidden-class");
 }
@@ -1593,7 +1643,61 @@ function errorsShow() {
 
 function errorTextOut(mes) {
     errorsShow();
-    document.getElementById("errors_textarea").innerText = mes;
+    //document.getElementById("errors_textarea").innerText = mes;
+    //document.getElementById("errors_p").innerHTML += '<span style="color: darkred;">' + mes + '</span><br>';
+    let st = '<span style="color: darkred;">' + mes + '</span><br>';
+    circMessBuffAdd(st);
+    circMessBuffOut();
+    errorScrollDown();
+}
+
+function errorMessageAdd(mes) {
+    //document.getElementById("errors_p").innerHTML += '<span style="color: black;">' + mes + '</span><br>';
+    let st = '<span style="color: black;">' + mes + '</span><br>';
+    circMessBuffAdd(st);
+    circMessBuffOut();
+    errorScrollDown();
+}
+
+function errorMessageAddList(list) {
+    Object.keys(list).forEach(function(key) {
+        errorMessageAdd("" + key + " : " + list[key]);
+    });
+}
+
+function errorScrollDown() {
+    try {
+        let paragraph = document.getElementById("errors_p");
+        paragraph.scrollTop = paragraph.scrollHeight;        
+    } catch (e) {
+
+    }
+}
+
+function circMessBuffAdd(st) {
+    circ_mess_buf[circ_mess_buf_had_number] = st;
+    circ_mess_buf_had_number += 1;
+    if (circ_mess_buf_had_number >= CIRC_MESS_BUFF_LENGTH) {
+        circ_mess_buf_had_number -= CIRC_MESS_BUFF_LENGTH;
+    }
+}
+
+function circMessBuffOut() {
+    let p_obj = document.getElementById("errors_p");
+    p_obj.innerHTML = "";
+
+    let h = circ_mess_buf_had_number;
+    for (let sh = 0; sh < CIRC_MESS_BUFF_LENGTH; sh++) {
+        let i = h + sh;
+        if (i >= CIRC_MESS_BUFF_LENGTH) {
+            i -= CIRC_MESS_BUFF_LENGTH;
+        }
+        if (typeof circ_mess_buf[i] != "undefined") {
+            if (circ_mess_buf[i] != null) {
+                p_obj.innerHTML += circ_mess_buf[i];
+            }
+        }
+    }
 }
 
 

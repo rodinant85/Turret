@@ -1,5 +1,8 @@
 let DRAG_EVENTS_LOG = false;
 
+let ERRORS_ARAEA_TEST_MODE = false;
+
+
 /* Change color for stream */
 let isNotActiveDragInterval = true;
 let dragInterval;
@@ -136,11 +139,19 @@ $(document).keydown(function (e) {
     }
 
     // For errors panel test. 
-    // Will be deleted.
+    // Will be deleted or removed.
     if (e.code =="KeyO") {
-        let t = Date.now();
-        let data_with_error = "{\"error\": \"" + t + ": Произошла страшная ошибка! Все пропало!!! <b>Совсем все!!!!</b>\"}";
-        getAllFromData(data_with_error);
+        if (ERRORS_ARAEA_TEST_MODE) {
+            let t = Date.now();
+            let data_with_error = '{"error": "' + t + ': Произошла страшная ошибка! Все пропало!!! <b>Совсем все!!!!</b>"}';
+            getAllFromWS2Data(data_with_error);
+            let data_with_info = '{"info": "' + t + ': Сейчас все в порядке."}';
+            getAllFromWS2Data(data_with_info);
+            let data_with_list = '{"system_info": {"CPU Temp": "30.18 C", "SD": "28G, 12.34%", "RAM": "3743M, 3.8%", "CPU": "1.5H, 0.0%", "Uptime": "0 hours : 0 min", "Last reboot": "04.07.22-13:07:55", "IP": "et 192.168.88.232"}}';
+            getAllFromWS2Data(data_with_list);
+        } else {
+            errorsShow();
+        }
     }
 
     return e;
@@ -297,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (isNotActiveDragInterval) {
             dragInterval = setInterval(function () {
-                let st = "{\"comm\":[\"MV_HLD:DX:" + DX_2 + ":DY:" + DY_2 + "\"]}"; 
+                let st = '{"comm":["MV_HLD:DX:' + DX_2 + ':DY:' + DY_2 + '"]}'; 
                 ws.send(st);
                 ws2.send(st); 
             }, 50);
@@ -386,7 +397,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
         if (isNotActiveDragInterval) {
             dragInterval = setInterval(function () {
-                let st = "{\"comm\":[\"MV_HLD:DX:" + DX_2 + ":DY:" + DY_2 + "\"]}"; 
+                let st = '{"comm":["MV_HLD:DX:' + DX_2 + ':DY:' + DY_2 + '"]}'; 
                 ws.send(st);
                 ws2.send(st);
             }, 50);

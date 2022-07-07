@@ -362,7 +362,16 @@ function mouseCoordinateMessageSender() {
             // For test ws2 disconnect case uncomment next line.
             // return;
         }
-        let st = "{\"comm\":[\"MV_HLD:DX:" + (Math.round(DX_2 * 1000) / 1000) + ":DY:" + (Math.round(DY_2 * 1000) / 1000) + "\"]}"; 
+
+        if (isNaN(DX_2)) {
+            DX_2 = 0;
+        }
+
+        if (isNaN(DY_2)) {
+            DY_2 = 0;
+        }
+
+        let st = '{"comm":["MV_HLD:DX:' + (Math.round(DX_2 * 1000) / 1000) + ':DY:' + (Math.round(DY_2 * 1000) / 1000) + '"]}'; 
         if (MOUSE_COORDINATE_LOG) {
             console.log(st);
         }
@@ -378,8 +387,10 @@ function mouseCoordinateMessageSender() {
 }
 
 canvas.addEventListener('mousedown', function(e) {
-    if (colibration_started) {
-        return;
+    if ("colibration_started" in window) {
+        if (colibration_started) {
+            return;
+        }
     }
 
     isMouseDownMove = true;
@@ -451,8 +462,10 @@ canvas.addEventListener('mouseup', function (e) {
 });
 
 canvas.addEventListener('mousemove', function (e) {
-    if (colibration_started) {
-        return;
+    if ("colibration_started" in window) {
+        if (colibration_started) {
+            return;
+        }
     }
 
     if (isMouseDownMove) {

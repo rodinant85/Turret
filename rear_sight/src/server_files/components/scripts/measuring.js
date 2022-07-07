@@ -1,6 +1,6 @@
-let MEASURING_ZOOM_MIN = 0.5;
-let MEASURING_ZOOM_MAX = 20;
-let MEASURING_ZOOM_DEFAULT = 5;
+let MEASURING_ZOOM_MIN = 0.2;
+let MEASURING_ZOOM_MAX = 5;
+let MEASURING_ZOOM_DEFAULT = 2.5;
 let MEASURING_ZOOM_STEP = 0.05;
 let measuring_zoom = MEASURING_ZOOM_DEFAULT;
 let is_measuring = false;
@@ -11,7 +11,7 @@ let full_screen_height_in_mrad;
 
 
 function processMeasuring() {
-    if (!(isRightSquareBracket_ButtonPushed || isLeftSquareBracket_ButtonPushed)) {
+    if (!(isRightSquareBracket_ButtonPushed || isLeftSquareBracket_ButtonPushed || isEquals_ButtonPushed)) {
         return;
     }
 
@@ -20,21 +20,26 @@ function processMeasuring() {
 
 
 function measuringRoutine() {
-    is_measuring = true;
+    let is_select_distance_needed = false;
+
     resetMeasuringInterval();
     measuringImageShow();
 
-    if (isRightSquareBracket_ButtonPushed) {
+    if (isRightSquareBracket_ButtonPushed && is_measuring) {
         measuring_zoom += MEASURING_ZOOM_STEP;
         if (measuring_zoom > MEASURING_ZOOM_MAX) {
             measuring_zoom = MEASURING_ZOOM_MAX;
         }
-    } else if (isLeftSquareBracket_ButtonPushed) {
+    } else if (isLeftSquareBracket_ButtonPushed && is_measuring) {
         measuring_zoom -= MEASURING_ZOOM_STEP;
         if (measuring_zoom < MEASURING_ZOOM_MIN) {
             measuring_zoom = MEASURING_ZOOM_MIN;
         }
-    } 
+    } else if (isEquals_ButtonPushed && is_measuring) {
+        is_select_distance_needed = true;
+    }
+
+    is_measuring = true;
 
     measuringZoomCSSSet(measuring_zoom);
 
@@ -43,7 +48,7 @@ function measuringRoutine() {
     let square_image_zoomed_width_px = SQUARE_IMAGE_WIDTH_PX * measuring_zoom;
 
     let square_image_width_part = square_image_zoomed_width_px / rvs.w;
-
+ 
     if (!isStreamsSwapped) {
         square_image_width_part *= video_zoom;
     }
@@ -58,6 +63,19 @@ function measuringRoutine() {
     let text = "" + st + " mrad = 1m at " + st2 + "m";
 
     document.getElementById("measuring_label").innerText = text;
+
+    if (is_select_distance_needed) {
+        let string_index = Math.floor(st2 / 100) - 1;
+        // Index mast be from 0 to 19
+        if (string_index < 0) {
+            string_index = 0;
+        }
+        if (string_index > 19) {
+            string_index = 19;
+        }
+        ws.send('{"comm":["SET_FCI:' + string_index + '"]}');
+        ws.send('{"comm":["GET_FCI"]}');
+    }
 }
 
 
