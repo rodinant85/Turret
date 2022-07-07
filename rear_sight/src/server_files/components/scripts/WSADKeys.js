@@ -15,6 +15,7 @@ let isF_ButtonPushed = false;
 let isI_ButtonPushed = false;
 let isLeftSquareBracket_ButtonPushed = false;
 let isRightSquareBracket_ButtonPushed = false;
+let isEquals_ButtonPushed = false;
 
 let isANY_ButtonPushed = false;
 let strButtonStatus
@@ -82,6 +83,9 @@ function set_keydown(key_code) {
     else if (key_code === ']') {
         isRightSquareBracket_ButtonPushed = true;
     }
+    else if (key_code === '=') {
+        isEquals_ButtonPushed = true;
+    }
 
     if (isQ_ButtonPushed || isW_ButtonPushed || isE_ButtonPushed
         || isA_ButtonPushed || isS_ButtonPushed || isD_ButtonPushed
@@ -122,6 +126,9 @@ function set_keyup(key_code) {
     }
     else if (key_code === ']') {
         isRightSquareBracket_ButtonPushed = false;
+    }
+    else if (key_code === '=') {
+        isEquals_ButtonPushed = false;
     }
 
     if (!(isQ_ButtonPushed || isW_ButtonPushed || isE_ButtonPushed
