@@ -112,7 +112,7 @@ while True:
         exc_log.error('CPU temp > 70.0')
         ws_client.send_error(f'[{time.strftime("%d.%m.%y, %H:%M:%S")}] '
                              f'CPU Temp is {get_temperature()}!')
-        stop_service('quadro_rear_sight.service')
+        stop_service('quadro_rear_sight')
     if not serialport(name=f'/dev/{port}'):
         exc_log.error('Serial ERROR')
         ws_client.send_error(f'[{time.strftime("%d.%m.%y, %H:%M:%S")}]'
@@ -125,8 +125,9 @@ while True:
         exc_log.error('Websocket is not response')
     if not web_ready(f'http://{MY_IP}:56778', time_for_check=1):
         exc_log.error('Web is not response')
-        stop_service('quadro_rear_sight.service')
-    if get_temperature() < 50 and not service_alive('machine_gun_rear_sight.service'):
+        stop_service('quadro_rear_sight')
+    if get_temperature() < 50 and not service_alive('quadro_rear_sight.service'):
         info_log.info('Temp is normal')
         start_rear_sight()
     time.sleep(10)
+
