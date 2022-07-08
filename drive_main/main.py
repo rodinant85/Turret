@@ -1,6 +1,7 @@
 from app.logger import exc_log, info_log
 from app import ws_client
 from app.diagnostic import *
+import sys
 
 info_log = info_log('INFO')
 exc_log = exc_log('EXCEPTION')
@@ -32,6 +33,20 @@ def start_service(service: str):
     info_log.info(f'Starting {service}.service')
     os.system(f'systemctl start {service}.service')
     time.sleep(10)
+
+
+def start_rear_sight():
+    info_log.info('Starting quadro_rear_sight.service')
+    os.system("systemctl start quadro_rear_sight.service")
+    time.sleep(1)
+    if service_alive('quadro_rear_sight.service'):
+        info_log.info('Service rear_sight is working')
+    if not web_ready(f'http://{MY_IP}:56778'):
+        exc_log.error('Web not response for 60 sec. Reboot.')
+        stop_program()
+    else:
+        info_log.info('Web is working')
+        ws_client.send('{"need_reload":"true"}')
 
 
 def usb_ports():
@@ -90,24 +105,14 @@ if ws_client.server_ready():
 else:
     exc_log.error('Websocket not start')
 
-start_service('quadro_rear_sight')
-
-if service_alive('quadro_rear_sight.service'):
-    info_log.info('Service rear_sight is working')
-
-
-if not web_ready(f'http://{MY_IP}:56778'):
-    exc_log.error('Web not response for 60 sec. Reboot.')
-    stop_program()
-else:
-    info_log.info('Web is working')
-
+start_rear_sight()
 
 while True:
     if get_temperature() > 70:
         exc_log.error('CPU temp > 70.0')
         ws_client.send_error(f'[{time.strftime("%d.%m.%y, %H:%M:%S")}] '
                              f'CPU Temp is {get_temperature()}!')
+        stop_service('quadro_rear_sight.service')
     if not serialport(name=f'/dev/{port}'):
         exc_log.error('Serial ERROR')
         ws_client.send_error(f'[{time.strftime("%d.%m.%y, %H:%M:%S")}]'
@@ -118,6 +123,10 @@ while True:
         exc_log.error('Rear_sight service is not alive')
     if not ws_client.server_ready():
         exc_log.error('Websocket is not response')
-    if not is_web_alive(f'http://{MY_IP}:56778'):
+    if not web_ready(f'http://{MY_IP}:56778', time_for_check=1):
         exc_log.error('Web is not response')
+        stop_service('quadro_rear_sight.service')
+    if get_temperature() < 50 and not service_alive('machine_gun_rear_sight.service'):
+        info_log.info('Temp is normal')
+        start_rear_sight()
     time.sleep(10)

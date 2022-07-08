@@ -9,7 +9,6 @@ from bitarray import bitarray
 from websockets import WebSocketServerProtocol
 from threading import Timer
 
-
 logging.basicConfig(level=logging.INFO)
 
 
@@ -97,7 +96,7 @@ def parse_byte_to_str(serial_data: bytes):
     status_msg_type = 0x02
     settings_msg_type = 0x01
     if len(serial_data) == 12 and sum(serial_data[1:-1]) % 256 == serial_data[11]:
-        if serial_data[1] == status_msg_type:
+        if serial_data[1] == status_msg_type or serial_data[1] == 0x00:  # TODO: delete 0x00 for prod
             try:
                 stp_x = int.from_bytes(serial_data[2:6], byteorder='little', signed=True)
                 stp_y = int.from_bytes(serial_data[6:10], byteorder='little', signed=True)
@@ -207,7 +206,8 @@ class Server:
                     except Exception as e:
                         print(e)
 
-            if message.startswith(error_msg_header):
+            if message.startswith(error_msg_header) \
+                    or message == '{"need_reload":"true"}':
                 await self.send_to_clients(message)
 
 
@@ -222,4 +222,3 @@ async def main():
 
 
 asyncio.run(main())
-

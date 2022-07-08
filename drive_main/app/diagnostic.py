@@ -1,6 +1,5 @@
 import os
 import subprocess
-import sys
 import serial
 import time
 from smbus import SMBus
@@ -8,9 +7,6 @@ import spidev
 import re
 import socket
 import requests
-import app.ws_client
-import asyncio
-from websocket import create_connection
 
 
 def is_camera_ready(num=0):
@@ -150,10 +146,8 @@ def spi_ready(n_spi=0, chip=0):
 if __name__ == '__main__':
     if spi_ready():
         print('SPI is OK')
-        #asyncio.run(ws_client.send_error('SPI IS OK'))
     if serialport():
         print('Serial is OK')
-        #asyncio.run(ws_client.send_error('Serial is OK'))
     if is_camera_ready():
         print('Camera is OK')
     if tcp_socket(get_ip(), 56778):

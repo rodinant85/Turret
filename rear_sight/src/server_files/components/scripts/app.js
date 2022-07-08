@@ -1260,6 +1260,10 @@ function getAllFromWS2Data(mess) {
             errorMessageAddList(r["system_info"]);
         }
 
+        if (typeof r["need_reload"] != "undefined") {
+            reload();
+        }
+
         // mess example
         // {"resp":{"STP_X":-3509,"STP_Y":955,"SW_X_MAX":0,"SW_X_MIN":0,"SW_Y_MAX":0,"SW_Y_MIN":0}}
         if (typeof r["resp"] != "undefined") {
