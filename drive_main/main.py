@@ -97,7 +97,7 @@ if service_alive('quadro_video_streamer.service'):
 else:
     exc_log.error('Video streamer is not alive')
 
-CONFIG_PATH = "/home/pi/rear_sight/src/server_files/components/scripts/config_ws2.js"
+CONFIG_PATH = "/home/pi/Turret/rear_sight/src/server_files/components/scripts/config_ws2.js"
 os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
 with open(CONFIG_PATH, 'w') as js_file:
     js_file.write(f'let WS2_URI = "ws://{MY_IP}:56779"')
