@@ -20,7 +20,7 @@ let line;
 let clearLine;
 
 let defaultTable = "{\"comm\":[\"CLR_FULL_TBL\"]}";
-//indexTable = ws.send("{\"comm\":[\"GET_FCI\"]}");
+//indexTable = ws_send("{\"comm\":[\"GET_FCI\"]}");
 // var g;
 // g = document.createElement('div')
 // var gg;
@@ -30,13 +30,13 @@ let defaultTable = "{\"comm\":[\"CLR_FULL_TBL\"]}";
 
 
 function cl() {
-    console.log(ws.send(clearLine));
-    ws.send("{\"comm\":[\"GET_FCA\"]}");
+    console.log(ws_send(clearLine));
+    ws_send("{\"comm\":[\"GET_FCA\"]}");
 }
 
 function setDefaultTableIndex() {
-    console.log(ws.send("{\"comm\":[\"CLR_TBL_REC:" + indexTable + "\"]}"));
-    ws.send("{\"comm\":[\"GET_FCA\"]}");
+    console.log(ws_send("{\"comm\":[\"CLR_TBL_REC:" + indexTable + "\"]}"));
+    ws_send("{\"comm\":[\"GET_FCA\"]}");
     console.log("Index is clear");
 }
 
@@ -76,8 +76,8 @@ function clearTableAcceptText() {
 }
 
 function setDefaultTableAccept() {
-    console.log(ws.send(defaultTable))
-    ws.send("{\"comm\":[\"GET_FCA\"]}");
+    console.log(ws_send(defaultTable))
+    ws_send("{\"comm\":[\"GET_FCA\"]}");
     let e = document.getElementById('clear-table');
     //let e1 = document.getElementById('clear-table1');
     document.getElementById("shootText").style.display="inline";
@@ -123,9 +123,9 @@ document.getElementById("stream").onclick = function (event) {
         clearLine = "{\"comm\":[\"FIX_FC:DX:" + (-DX) + ":DY:" + (-DY) + "\"]}";
 
         if (DX !== 0 || DY !== 0) {
-            ws.send(line);
+            ws_send(line);
             // then request table again
-            ws.send("{\"comm\":[\"GET_FCA\"]}");
+            ws_send("{\"comm\":[\"GET_FCA\"]}");
         }
 
 
@@ -314,7 +314,7 @@ let mouseMovingInterval;
 //         x = event.clientX;
 //         y = event.clientY;
 //         console.log("x: " + x + " y: " + y);
-//         //ws.send("{\"comm\":{\"MV_HLD:DX:" + (Math.round(x * 1000) / 1000) + ":DY:" + (Math.round(y * 1000) / 1000) + "\"}}")
+//         //ws_send("{\"comm\":{\"MV_HLD:DX:" + (Math.round(x * 1000) / 1000) + ":DY:" + (Math.round(y * 1000) / 1000) + "\"}}")
 //
 //     }
 //
@@ -332,6 +332,12 @@ function recalculateRealVideoSize() {
     let place_h = stream.clientHeight;
     let video_w = stream.videoWidth;
     let video_h = stream.videoHeight;
+
+    if (isNaN(video_w) && isNaN(video_h)) {
+        // mjpeg stream case
+        video_w = stream.naturalWidth;
+        video_h = stream.naturalHeight;
+    }
 
     if (place_w / video_w > place_h / video_h) {
         // The place wider then video.
@@ -375,7 +381,7 @@ function mouseCoordinateMessageSender() {
         if (MOUSE_COORDINATE_LOG) {
             console.log(st);
         }
-        ws.send(st);
+        ws_send(st);
         ws2.send(st);
     } catch(exeption) {
 
@@ -435,7 +441,7 @@ canvas.addEventListener('mousedown', function(e) {
          // delatealltracker
          let st = "coords: " + xp + " " + yp;
          console.log(st);
-         ws.send(st);   
+         ws_send(st);   
          
          document.getElementById("tracker_div").classList.remove("hidden-class");
     } else {
@@ -507,7 +513,7 @@ function trackerStop() {
     // Need to send "Stop" command to tracker here.
     let st = "delatealltracker";
     console.log(st);
-    ws.send(st);   
+    ws_send(st);   
 }
 
 // function UIslider(){
@@ -641,13 +647,13 @@ function handleValue(value){
 
     if (x < i) {
         for (i = 0; i < x ; i++) {
-            console.log(ws.send('bt:00010000000'));
+            console.log(ws_send('bt:00010000000'));
         }
         i = x;
     }
     if (x > 0) {
         for (i; i < x; i++) {
-            console.log(ws.send('bt:00000100000'));
+            console.log(ws_send('bt:00000100000'));
         }
         i = x;
     }
@@ -660,7 +666,7 @@ function handleValue(value){
     /*
     if (x < 0){
         for (let i = 0; i > x; i++) {
-            console.log(ws.send('bt:00010000000'));
+            console.log(ws_send('bt:00010000000'));
         }
     }*/
 

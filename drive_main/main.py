@@ -87,6 +87,8 @@ if not MY_IP:
     exc_log.error('NETWORK IS NONE')
 else:
     info_log.info(f'MY IP: {MY_IP}')
+    
+start_service('streamer_mjpg')
 
 CONFIG_PATH = "/home/pi/rear_sight/src/server_files/components/scripts/config_ws2.js"
 os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)

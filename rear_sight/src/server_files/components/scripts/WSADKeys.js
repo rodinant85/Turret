@@ -42,8 +42,8 @@ function set_keydown(key_code) {
         isI_ButtonPushed = true;
     else if (key_code === 'W' || key_code === 'Ц'){
         for (sendctr = 0; sendctr < 10; sendctr++) {
-            (ws.send(strButtonStatus));
-            console.log(ws.send(strButtonStatus));
+            (ws_send(strButtonStatus));
+            console.log(ws_send(strButtonStatus));
             isW_ButtonPushed = true;
         }
     }
@@ -51,8 +51,8 @@ function set_keydown(key_code) {
         isS_ButtonPushed = true;
     else if (key_code === 'S' || key_code === 'І' || key_code === 'Ы'){
         for (sendctr = 0; sendctr < 10; sendctr++) {
-            (ws.send(strButtonStatus));
-            console.log(ws.send(strButtonStatus));
+            (ws_send(strButtonStatus));
+            console.log(ws_send(strButtonStatus));
             isS_ButtonPushed = true;
         }
     }
@@ -60,8 +60,8 @@ function set_keydown(key_code) {
         isA_ButtonPushed = true;
     else if (key_code === 'A' || key_code === 'Ф'){
         for (sendctr = 0; sendctr < 10; sendctr++) {
-            (ws.send(strButtonStatus));
-            console.log(ws.send(strButtonStatus));
+            (ws_send(strButtonStatus));
+            console.log(ws_send(strButtonStatus));
             isA_ButtonPushed = true;
         }
     }
@@ -69,8 +69,8 @@ function set_keydown(key_code) {
         isD_ButtonPushed = true;
     else if (key_code === 'D' || key_code === 'В'){
         for (sendctr = 0; sendctr < 10; sendctr++) {
-            (ws.send(strButtonStatus));
-            console.log(ws.send(strButtonStatus));
+            (ws_send(strButtonStatus));
+            console.log(ws_send(strButtonStatus));
             isD_ButtonPushed = true;
         }
     }
@@ -159,9 +159,9 @@ function send_control_message() {
             console.log("impossible to do stream ZOOMING and ROI CHANGING and CHANGE PURSUIT DISTANCE when fire is processed");
             return;
         }
-        ws.send(strButtonStatus);
+        ws_send(strButtonStatus);
         if (isUP_ButtonPushed || isDOWN_ButtonPushed) {
-            ws.send("{\"comm\":[\"GET_FCI\"]}");
+            ws_send("{\"comm\":[\"GET_FCI\"]}");
         }
     }
 }
@@ -209,15 +209,15 @@ function upButtonPressed () {
 function scrollDistDOWN (){
    // document.addEventListener("keydown",function(e){if(e.shiftKey){
         console.log("scrollDistDOWN")
-        ws.send('bt:00000010000');
-        ws.send("{\"comm\":[\"GET_FCI\"]}");
+        ws_send('bt:00000010000');
+        ws_send("{\"comm\":[\"GET_FCI\"]}");
       //  }});
-        //ws.send(strButtonStatus);
+        //ws_send(strButtonStatus);
         /*
         if (document.event.shiftKey === true)
             {
                 console.log("16 is pressed");
-                ws.send("{\"comm\":[\"GET_FCI\"]}");
+                ws_send("{\"comm\":[\"GET_FCI\"]}");
             }
          */
 
@@ -231,12 +231,12 @@ function scrollDistDOWN (){
 function scrollDistUP() {
     //document.addEventListener("keydown",function(e){if(e.shiftKey){
         console.log("scrollDistUP")
-        ws.send('bt:00000001000');
-        ws.send("{\"comm\":[\"GET_FCI\"]}");
+        ws_send('bt:00000001000');
+        ws_send("{\"comm\":[\"GET_FCI\"]}");
         // }});
         //console.log("wheel UP");
         //isUP_ButtonPushed = false;
-        //ws.send(strButtonStatus);
+        //ws_send(strButtonStatus);
 }
 
 

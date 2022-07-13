@@ -52,9 +52,9 @@ $('input[type=checkbox]').each(function()
 });
 
 function fire() {
-    $('#id_mode_button_fire').css({'background-color': 'rgba(236, 38, 103, 0.5)'}, ws.send("{\"comm\":[\"FUSE_R\"]}"));
+    $('#id_mode_button_fire').css({'background-color': 'rgba(236, 38, 103, 0.5)'}, ws_send("{\"comm\":[\"FUSE_R\"]}"));
     setTimeout(function () {
-        $('#id_mode_button_fire').css({'background-color': 'rgba(76, 175, 80, 0.5)'}, ws.send("{\"comm\":[\"FUSE_I\"]}"));
+        $('#id_mode_button_fire').css({'background-color': 'rgba(76, 175, 80, 0.5)'}, ws_send("{\"comm\":[\"FUSE_I\"]}"));
     }, 2000);
 }
 
@@ -110,22 +110,22 @@ function onClickButtonRegFire() {
     if (isRegistrationMode) {
         isRegistrationMode = false;
         document.getElementById("id_mode_button_reg_fire").style.background = "rgba(76, 175, 80, 0.5)";
-        ws.send("{\"comm\":[\"N_REG_FIRE\"]}");
+        ws_send("{\"comm\":[\"N_REG_FIRE\"]}");
     } else {
         isRegistrationMode = true;
         document.getElementById("id_mode_button_reg_fire").style.background = "rgba(236, 38, 103, 0.5)";
-        ws.send("{\"comm\":[\"SET_FCI:" + 0 + "\"]}");
-        ws.send("{\"comm\":[\"REG_FIRE\"]}");
+        ws_send("{\"comm\":[\"SET_FCI:" + 0 + "\"]}");
+        ws_send("{\"comm\":[\"REG_FIRE\"]}");
     }
-    ws.send("{\"comm\":[\"GET_FCI\"]}");
+    ws_send("{\"comm\":[\"GET_FCI\"]}");
 }
 
 function onClickButtonZoomPlus() {
-    ws.send("bt:00100000000");
+    ws_send("bt:00100000000");
 }
 
 function onClickButtonZoomMinus() {
-    ws.send("bt:10000000000");
+    ws_send("bt:10000000000");
 }
 
 function onClickButtonSwapStreams() {
@@ -138,12 +138,12 @@ function onClickButtonSwapStreams() {
         isStreamsSwapped = false;
         document.getElementById("id_mode_button_swap_streams").style.background = "rgba(76, 175, 80, 0.5)";
         // document.getElementById("canvas-square").style.display = "none";
-        ws.send("{\"comm\":[\"SWP_STRM\"]}");
+        ws_send("{\"comm\":[\"SWP_STRM\"]}");
     } else {
         isStreamsSwapped = true;
         document.getElementById("id_mode_button_swap_streams").style.background = "rgba(236, 38, 103, 0.5)";
         // document.getElementById("canvas-square").style.display = "block";
-        ws.send("{\"comm\":[\"SWP_STRM\"]}");
+        ws_send("{\"comm\":[\"SWP_STRM\"]}");
     }
 }
 
@@ -171,22 +171,22 @@ function displayBlockSwapStreams(){
 //     webrtcPeerConnection.setLocalDescription(desc).then(function () {
 //         console.info(JSON.stringify({type: "sdp", "data": webrtcPeerConnection.localDescription}));
 //         // if (JSON.stringify(webrtcPeerConnection.localDescription).includes("VP8")) {
-//         //     ws.send(cheat_str);
+//         //     ws_send(cheat_str);
 //         // } else {
-//         ws.send(JSON.stringify({type: "sdp", "data": webrtcPeerConnection.localDescription}));
+//         ws_send(JSON.stringify({type: "sdp", "data": webrtcPeerConnection.localDescription}));
 //         isNotRunned = false;
 //         // }
 //     }).catch(reportError);
 //     // if (isNotRunned) {
-//     //     ws.send("aaaaaaaaa: KKK?????????WTF????");
-//     //     ws.send(JSON.stringify({type: "sdp", "data": desc}));
+//     //     ws_send("aaaaaaaaa: KKK?????????WTF????");
+//     //     ws_send(JSON.stringify({type: "sdp", "data": desc}));
 //     // }
 // }
 
 function onLocalDescription(desc) {
     console.log("Local description: " + JSON.stringify(desc));
     webrtcPeerConnection.setLocalDescription(desc).then(function () {
-        ws.send(JSON.stringify({type: "sdp", "data": webrtcPeerConnection.localDescription}));
+        ws_send(JSON.stringify({type: "sdp", "data": webrtcPeerConnection.localDescription}));
     }).catch(reportError);
 }
 
@@ -212,8 +212,8 @@ function onIceCandidate(event) {
         return;
 
     console.info("Sending ICE candidate out: " + JSON.stringify(event.candidate));
-    //ws.send(JSON.stringify({"type": "ice", "data": event.candidate}));
-    ws.send(arr[arrInx]);
+    //ws_send(JSON.stringify({"type": "ice", "data": event.candidate}));
+    ws_send(arr[arrInx]);
     arrInx++;
 }
 
@@ -245,7 +245,7 @@ function onServerMessage(event) {
     if (event.data.includes("FCA")) {
         if (event.data.includes("NO")) {
             // request Fire Corrections Array again
-            ws.send("{\"comm\":[\"GET_FCA\"]}");
+            ws_send("{\"comm\":[\"GET_FCA\"]}");
         } else {
             defaultFullTable = $(document).ready(function() {
                 var myJsonData = (event.data);
@@ -275,20 +275,20 @@ function onServerMessage(event) {
                         inx = inx.replace("row_", "");
                         inx = inx.replace("selected", "");
                         if (requestedTableRowIndex !== inx) {
-                            ws.send("{\"comm\":[\"SET_FCI:" + inx + "\"]}");
-                            ws.send("{\"comm\":[\"GET_FCI\"]}");
+                            ws_send("{\"comm\":[\"SET_FCI:" + inx + "\"]}");
+                            ws_send("{\"comm\":[\"GET_FCI\"]}");
                             requestedTableRowIndex = inx;
                             console.log("req inx " + requestedTableRowIndex);
                             console.log("inx" + inx);
                         }
-                        // $(this).addClass('selected'); ws.send(jsonData.FCI);
+                        // $(this).addClass('selected'); ws_send(jsonData.FCI);
                         // $(this).siblings().removeClass('selected');
                         // var value = $(this).find('tr:first').html();
                     })
                 }, 1000 );
 
             // request Fire Correction Index
-            ws.send("{\"comm\":[\"GET_FCI\"]}");
+            ws_send("{\"comm\":[\"GET_FCI\"]}");
         }
         // return;
     }
@@ -953,22 +953,28 @@ function playStream(videoElement, configuration, reportErrorCB) {
     reportError = (reportErrorCB != undefined) ? reportErrorCB : function (text) {
     };
 
-    ws.addEventListener("message", onServerMessage);
+    if (typeof IS_QUAD_BIKE != "undefined") {
+        if (IS_QUAD_BIKE) {
+
+        } else {
+            ws.addEventListener("message", onServerMessage);
+        }
+    }
 }
 
 
 function scheduled_sender() {
-    ws.send("{\"comm\":[\"OK\"]}");
+    ws_send("{\"comm\":[\"OK\"]}");
 }
 
 let isRunned = true;
 
 function run_once() {
     if (isRunned) {
-        ws.send(arr[0]);
-        ws.send(arr[1]);
-        ws.send(arr[2]);
-        ws.send(arr[3]);
+        ws_send(arr[0]);
+        ws_send(arr[1]);
+        ws_send(arr[2]);
+        ws_send(arr[3]);
         isRunned = false;
     }
 }
@@ -993,10 +999,10 @@ let camCommCounter = 0;
 
 function pDotJoystickScheduleSender() {
     if (isPDotP) {
-        ws.send("{\"comm\":[\"PDOT_P\"]}");
+        ws_send("{\"comm\":[\"PDOT_P\"]}");
     }
     if (isPDotM) {
-        ws.send("{\"comm\":[\"PDOT_M\"]}");
+        ws_send("{\"comm\":[\"PDOT_M\"]}");
     }
 }
 
@@ -1033,7 +1039,7 @@ function joystickScheduleSender() {
     }
     camCommCounter++;
     if (camCommCounter == 1) {
-        ws.send(movStr);
+        ws_send(movStr);
         camCommCounter = 0;
     }
 }
@@ -1056,30 +1062,45 @@ $(function begin() {
     });
 
 
-    ws = new WebSocket('ws://' + document.location.host + '/chart', ['string', 'foo']);
+    if (typeof IS_QUAD_BIKE != "undefined") {
+        if (IS_QUAD_BIKE) {
+
+        } else {
+            ws = new WebSocket('ws://' + document.location.host + '/chart', ['string', 'foo']);
+            //let vidstream = document.getElementById("stream");
+            // let config = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]};
+            // let config = {'iceServers': [{'urls': 'stun:192.168.1.131:3478'}]};
+            //let config = {'iceServers': []};
+
+            ws.onopen = function () {
+                setTimeout(run_once, 2000);
+
+                console.log('ws onopen');
+            };
+
+            ws.onclose = function () {
+                console.log('ws onclose');
+            };
+
+            ws.onmessage = function(event) {
+                console.log("Received from ws: " + event.data);
+                getAllFromWSData(event.data);
+            };
+
+            ws.onerror = function (error) {
+                console.log('ws error');
+            };
+        }
+    }
+
     let vidstream = document.getElementById("stream");
-    // let config = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]};
-    // let config = {'iceServers': [{'urls': 'stun:192.168.1.131:3478'}]};
     let config = {'iceServers': []};
 
-    ws.onopen = function () {
-        setTimeout(run_once, 2000);
-
-        console.log('ws onopen');
-    };
-
-    ws.onclose = function () {
-        console.log('ws onclose');
-    };
-
-    ws.onmessage = function(event) {
-        console.log("Received from ws: " + event.data);
-        getAllFromWSData(event.data);
-      };
-
-    ws.onerror = function (error) {
-        console.log('ws error');
-    };
+    let orig = window.location.origin;
+    let sa = orig.split(':') ;
+    let videoOrigin = sa[0] + ':' + sa[1] + ':8080/?action=stream';
+    vidstream.setAttribute("src", videoOrigin);
+    console.log("Video src: " + videoOrigin);
 
     playStream(vidstream, config, function (errmsg) {
         console.error(errmsg);
@@ -1092,6 +1113,17 @@ $(function begin() {
     //stopInterval = setInterval(stopIntervalHandler, 50);
     setTimeout(stopIntervalHandler, 50);
 });
+
+
+function ws_send(mes) {
+    if (typeof IS_QUAD_BIKE != "undefined") {
+        if (IS_QUAD_BIKE) {
+            return;
+        } else {
+            ws.send(mes);
+        }
+    }
+}
 
 
 function getAllFromWSData(data) {
@@ -1191,7 +1223,7 @@ function stopIntervalHandler() {
                     }
                 }
 
-                ws.send(st);
+                ws_send(st);
                 ws2.send(st);
         }
     
@@ -1593,7 +1625,7 @@ function doColebration() {
 
 function step(_dx, _dy) {
     let st = '{"comm":["MV_HLD:DX:' + _dx + ':DY:' + _dy + '"]}'; 
-    ws.send(st);
+    ws_send(st);
     ws2.send(st); 
 }
 
@@ -1770,7 +1802,7 @@ function reload() {
     setInterval(function (){
         location.reload()
     }, 8000);
-    let zero = ws.send("{\"FIX_FC\":[{\"d\":100, \"v\":0.0, \"h\":0.0}, {\"d\":200, \"v\":0.3, \"h\":0.0}, {\"d\":300, \"v\":0.9, \"h\":0}, {\"d\":400, \"v\":1.7, \"h\":0}, {\"d\":500, \"v\":2.800000, \"h\":0.000000}, {\"d\":600, \"v\":3.900000, \"h\":0.000000}, {\"d\":700, \"v\":5.000000, \"h\":0.000000}, {\"d\":800, \"v\":6.100000, \"h\":0.000000}, {\"d\":900, \"v\":7.200000, \"h\":0.000000}, {\"d\":1000, \"v\":8.800000, \"h\":0.000000}, {\"d\":1100, \"v\":9.800000, \"h\":0.000000}, {\"d\":1200, \"v\":11.800000, \"h\":0.000000}, {\"d\":1300, \"v\":13.800000, \"h\":0.000000}, {\"d\":1400, \"v\":15.800000, \"h\":0.000000}, {\"d\":1500, \"v\":17.800000, \"h\":0.000000}, {\"d\":1600, \"v\":20.800000, \"h\":0.000000}, {\"d\":1700, \"v\":22.800000, \"h\":0.000000}, {\"d\":1800, \"v\":25.800000, \"h\":0.000000}, {\"d\":1900, \"v\":28.800000, \"h\":0.000000}, {\"d\":2000, \"v\":31.800000, \"h\":0.000000}]}");
+    let zero = ws_send("{\"FIX_FC\":[{\"d\":100, \"v\":0.0, \"h\":0.0}, {\"d\":200, \"v\":0.3, \"h\":0.0}, {\"d\":300, \"v\":0.9, \"h\":0}, {\"d\":400, \"v\":1.7, \"h\":0}, {\"d\":500, \"v\":2.800000, \"h\":0.000000}, {\"d\":600, \"v\":3.900000, \"h\":0.000000}, {\"d\":700, \"v\":5.000000, \"h\":0.000000}, {\"d\":800, \"v\":6.100000, \"h\":0.000000}, {\"d\":900, \"v\":7.200000, \"h\":0.000000}, {\"d\":1000, \"v\":8.800000, \"h\":0.000000}, {\"d\":1100, \"v\":9.800000, \"h\":0.000000}, {\"d\":1200, \"v\":11.800000, \"h\":0.000000}, {\"d\":1300, \"v\":13.800000, \"h\":0.000000}, {\"d\":1400, \"v\":15.800000, \"h\":0.000000}, {\"d\":1500, \"v\":17.800000, \"h\":0.000000}, {\"d\":1600, \"v\":20.800000, \"h\":0.000000}, {\"d\":1700, \"v\":22.800000, \"h\":0.000000}, {\"d\":1800, \"v\":25.800000, \"h\":0.000000}, {\"d\":1900, \"v\":28.800000, \"h\":0.000000}, {\"d\":2000, \"v\":31.800000, \"h\":0.000000}]}");
     console.log(zero);
 }
 

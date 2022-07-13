@@ -40,13 +40,13 @@ let spaceIsPressed = false;
 document.addEventListener('keydown', function(event) {
     if (event.ctrlKey && event.altKey) {
         let_buttonAltCtrlIsPressed();
-        ws.send("{\"comm\":[\"FUSE_UP\"]}");
+        ws_send("{\"comm\":[\"FUSE_UP\"]}");
         document.getElementById("shootText").innerHTML="READY TO FIRE";
         document.getElementById("shootText").style.display="inline";
         document.addEventListener('keyup', function(event) {
             if (event.ctrlKey && event.altKey && event.code === 'Space') {
                 // spaceIsPressed = true;
-                ws.send("{\"comm\":[\"DO_FIRE:1\"]}");
+                ws_send("{\"comm\":[\"DO_FIRE:1\"]}");
                 document.getElementById("shootText").innerHTML="FIRE!!!";
                 document.getElementById("shootText").style.display="inline";
 
@@ -72,7 +72,7 @@ document.addEventListener('keydown', function(event) {
 
             // if (spaceIsPressed === true) {0
             //     let_buttonAltCtrlIsPressed();
-            //     ws.send("{\"comm\":[\"DO_FIRE:3\"]}");
+            //     ws_send("{\"comm\":[\"DO_FIRE:3\"]}");
             //     spaceIsPressed = false;
             // }
         });
@@ -81,7 +81,7 @@ document.addEventListener('keydown', function(event) {
 
 document.addEventListener('keyup', function(event) {
     if (event.ctrlKey || event.altKey) {
-        ws.send("{\"comm\":[\"FUSE_DOWN\"]}");
+        ws_send("{\"comm\":[\"FUSE_DOWN\"]}");
         document.getElementById("shootText").innerHTML="";
         document.getElementById("shootText").style.display="none";
     }
@@ -92,14 +92,14 @@ document.addEventListener('keyup', function(event) {
 // $(document).keydown(function (e) {
 //     if (e.which === 17 && 18 && 32) {
 //         let_buttonAltCtrlIsPressed();
-//         ws.send("{\"comm\":[\"DO_FIRE:3\"]}");
+//         ws_send("{\"comm\":[\"DO_FIRE:3\"]}");
 //     }
 // })
 //
 // $(document).keydown(function (e) {
 //     if (e.which === 17 && 18) {
 //         let_buttonAltCtrlIsPressed();
-//         ws.send("{\"comm\":[\"FUSE_UP\"]}");
+//         ws_send("{\"comm\":[\"FUSE_UP\"]}");
 //         document.getElementById("shootText").innerHTML="READY TO FIRE";
 //         document.getElementById("shootText").style.display="inline";
 //     }
@@ -107,7 +107,7 @@ document.addEventListener('keyup', function(event) {
 //
 // $(document).keyup(function (e) {
 //     if (e.which === 17 && 18) {
-//         ws.send("{\"comm\":[\"FUSE_DOWN\"]}");
+//         ws_send("{\"comm\":[\"FUSE_DOWN\"]}");
 //         document.getElementById("shootText").innerHTML="";
 //         document.getElementById("shootText").style.display="none";
 //     }
@@ -119,7 +119,7 @@ document.addEventListener('keyup', function(event) {
 
 $(document).keydown(function (e) {
     if (e.which === 17 || e.which === 18) {
-        ws.send("{\"comm\":[\"FUSE_R\"]}");
+        ws_send("{\"comm\":[\"FUSE_R\"]}");
         $('#id_mode_button_fire').css({'background-color': 'rgba(236, 38, 103, 0.5)'});
         setTimeout(function () {
             $('#id_mode_button_fire').css({'background-color': 'rgba(76, 175, 80, 0.5)'});
@@ -159,7 +159,7 @@ $(document).keydown(function (e) {
 
 $(document).keyup(function (e) {
     if (e.which === 17 || e.which === 18) {
-        ws.send("{\"comm\":[\"FUSE_I\"]}");
+        ws_send("{\"comm\":[\"FUSE_I\"]}");
     }
     return e;
 })
@@ -186,13 +186,13 @@ $(document).keyup(function (e) {
 
 /*   Mouse Zoom   */
 function onDownMouseWheel() {
-    ws.send("bt:10000000000");
-    //ws.send("{\"comm\":[\"GET_FCI_-1\"]}" );
+    ws_send("bt:10000000000");
+    //ws_send("{\"comm\":[\"GET_FCI_-1\"]}" );
 }
 
 function onUpMouseWheel() {
-    ws.send("bt:00100000000");
-    //ws.send("{\"comm\":[\"GET_FCI_+1\"]}" );
+    ws_send("bt:00100000000");
+    //ws_send("{\"comm\":[\"GET_FCI_+1\"]}" );
 }
 
 
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isNotActiveDragInterval) {
             dragInterval = setInterval(function () {
                 let st = '{"comm":["MV_HLD:DX:' + DX_2 + ':DY:' + DY_2 + '"]}'; 
-                ws.send(st);
+                ws_send(st);
                 ws2.send(st); 
             }, 50);
             isNotActiveDragInterval = false;
@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function(){
         if (isNotActiveDragInterval) {
             dragInterval = setInterval(function () {
                 let st = '{"comm":["MV_HLD:DX:' + DX_2 + ':DY:' + DY_2 + '"]}'; 
-                ws.send(st);
+                ws_send(st);
                 ws2.send(st);
             }, 50);
             isNotActiveDragInterval = false;

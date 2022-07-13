@@ -6,23 +6,23 @@
     <meta charset="UTF-8">
     <title>REAR SIGHT</title>
     <!-- CSS only -->
-    <link rel="stylesheet" href="components/styles/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="src/server_files/components/styles/bootstrap-icons/bootstrap-icons.css">
     <link rel="manifest" href="manifest.json"/>
-    <script src="components/scripts/lib/jquery.min.js"></script>
-    <script src="components/scripts/lib/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="components/scripts/lib/adapter-latest.js"></script>
-    <script src='components/scripts/lib/joy.js'></script>
+    <script src="src/server_files/components/scripts/lib/jquery.min.js"></script>
+    <script src="src/server_files/components/scripts/lib/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="src/server_files/components/scripts/lib/adapter-latest.js"></script>
+    <script src='src/server_files/components/scripts/lib/joy.js'></script>
 
-    <link rel="stylesheet" type="text/css" href="components/styles/app_view.css"/>
-    <link rel="stylesheet" type="text/css" href="components/styles/jquery-ui.css">
-    <link rel="icon" href="components/images/icon.png"/>
-    <link href="components/styles/ShareTech-Regular.ttf" rel="font/ttf">
+    <link rel="stylesheet" type="text/css" href="src/server_files/components/styles/app_view.css"/>
+    <link rel="stylesheet" type="text/css" href="src/server_files/components/styles/jquery-ui.css">
+    <link rel="icon" href="src/server_files/components/images/icon.png"/>
+    <link href="src/server_files/components/styles/ShareTech-Regular.ttf" rel="font/ttf">
     <meta name="viewport" content="width=device-width">
-    <script src="components/scripts/lib/interact.min.js"></script>
-    <script src="components/scripts/lib/TweenLite.min.js"></script>
-    <script src="components/scripts/lib/CSSPlugin.min.js"></script>
-    <script src="components/scripts/lib/EasePack.min.js"></script>
-    <script src="components/scripts/lib/jquery.rsSliderLens.js"></script>
+    <script src="src/server_files/components/scripts/lib/interact.min.js"></script>
+    <script src="src/server_files/components/scripts/lib/TweenLite.min.js"></script>
+    <script src="src/server_files/components/scripts/lib/CSSPlugin.min.js"></script>
+    <script src="src/server_files/components/scripts/lib/EasePack.min.js"></script>
+    <script src="src/server_files/components/scripts/lib/jquery.rsSliderLens.js"></script>
 </head>
 
 <body>
@@ -52,7 +52,7 @@
 </div>
 
 <div id="measuring_div" class="hidden-class">
-    <img src="components/scripts/training/sq_02.png" class="outline">
+    <img src="src/server_files/components/scripts/training/sq_02.png" class="outline">
     <label id="measuring_label">1.0 mrad = 1m at 1000.00m</label>
 </div>
 
@@ -64,7 +64,7 @@
 
 <div id="shoot" class="shoot">
     <img style="width: 30%; margin-top: 20%; margin-left: auto; margin-right:auto; display: block; align-self: center;"
-         src="components/images/glass.png">
+         src="src/server_files/components/images/glass.png">
 </div>
 
 <div id="leftcol" class="leftcol">
@@ -174,7 +174,7 @@
     </div>
 
     <div class="ellipseHorizontal">
-<!--        <img class="ruler" src="components/images/ruler.png">-->
+<!--        <img class="ruler" src="src/server_files/components/images/ruler.png">-->
         <div id="horizontalBookmark"></div>
         <svg id="rulerH"></svg>
         <div id="horizontalCoordinatesBlock"><div id="horizontalCoordinates">00-00</div></div>
@@ -211,20 +211,22 @@
 
 </div>
 
-<div id="scrollableElement" class="area_video scrollableElement" >
-    <video id="stream" autoplay playsinline>
-        Your browser does not support video <hr> Ваш браузер не підтримує відео потік! <hr> Або ви оффлайн.
-    </video>
+<div id="scrollableElement" class="area_mjpeg scrollableElement" >
+    <!-- img id="stream" /--> <!-- , src="http://192.168.88.237:8080/?action=stream" /> -->
     <div id="swap_streams_on_click" onclick="onClickButtonSwapStreams()" style="display: none; position: absolute; float: left; width: 31%; min-height: 32%; z-index: 3000;"></div>
 
     <div onclick="hideBlockSwapStreams();" onmouseup="displayBlockSwapStreams();" onmousedown="hideBlockSwapStreams();" id="canvas-square" class="mainSquare">
         <canvas id="square1" class="mainSquare square1"></canvas>
-        <canvas class="mainSquare square2"></canvas>
+        <canvas class="mainSquare square2"> </canvas>
     </div>
 </div>
+<div id="streamDiv">
+    <img id="stream">
+</div>
+
 
 <!--
-        this need to mobile verison, joystick control etc.
+        <img src="http://192.168.88.237:8080/?action=stream" />
 -->
 <!--<div class="rightcol">
 
@@ -274,23 +276,23 @@
 
 
 
-<!--<script src='/components/scripts/pwa-handler.js'></script>-->
-<script src='components/scripts/lib/rulez.min.js'></script>
-<script type='module' src='components/scripts/lib/slide-ruler.js'></script>
-<script src='components/scripts/gamepad.js'></script>
-<script src='components/scripts/config_ws2.js'></script>
-<script src='components/scripts/config_geometry.js'></script>
-<script src='components/scripts/config_stepper.js'></script>
-<script src='components/scripts/config_device.js'></script>
-<script src='components/scripts/cookies.js'></script>
-<script src='components/scripts/app.js'></script>
-<script src='components/scripts/WSADKeys.js'></script>
-<script src="components/scripts/coordinates.js"></script>
-<script src='components/scripts/keyboardMouseKeys.js'></script>
-<script src='components/scripts/distInfo.js'></script>
-<script src='components/scripts/themes.js'></script>
-<script src='components/scripts/training/training.js'></script>
-<script src='components/scripts/measuring.js'></script>
+<!--<script src='/src/server_files/components/scripts/pwa-handler.js'></script>-->
+<script src='src/server_files/components/scripts/lib/rulez.min.js'></script>
+<script type='module' src='src/server_files/components/scripts/lib/slide-ruler.js'></script>
+<script src='src/server_files/components/scripts/gamepad.js'></script>
+<script src='src/server_files/components/scripts/config_ws2.js'></script>
+<script src='src/server_files/components/scripts/config_geometry.js'></script>
+<script src='src/server_files/components/scripts/config_stepper.js'></script>
+<script src='src/server_files/components/scripts/config_device.js'></script>
+<script src='src/server_files/components/scripts/cookies.js'></script>
+<script src='src/server_files/components/scripts/app.js'></script>
+<script src='src/server_files/components/scripts/WSADKeys.js'></script>
+<script src="src/server_files/components/scripts/coordinates.js"></script>
+<script src='src/server_files/components/scripts/keyboardMouseKeys.js'></script>
+<script src='src/server_files/components/scripts/distInfo.js'></script>
+<script src='src/server_files/components/scripts/themes.js'></script>
+<script src='src/server_files/components/scripts/training/training.js'></script>
+<script src='src/server_files/components/scripts/measuring.js'></script>
 
 
 </body>

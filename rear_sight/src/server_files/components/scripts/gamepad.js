@@ -2,7 +2,7 @@ const GAMEPAD_PRESENT = true;
 const GAMEPAD_THRESHOLD = 0.1;
 const SPEEDUP_RATE_MIN = 0.3;
 const SPEEDUP_RATE_MAX = 2.5;
-const SPEEDUP_RATE_STEP = 0.01;
+const SPEEDUP_RATE_STEP = 0.1;
 
 var gamepad_axe_x = 0.0;
 var gamepad_axe_y = 0.0;
@@ -22,6 +22,23 @@ var is_gp_set_distance_pressed = false;
 var gamepad_simulate_key_repeat_interval = 0;
 
 var gamepads = [];
+
+
+function toLogarithm(x) {
+    // slope of the logarithm
+    let t = 100;
+
+    // fixed point No 0
+    let x0 = 0;
+    let y0 = 0;
+
+    // fixed point No 1
+    let x1 = 3;
+    let y1 = 3;
+
+    let tr_x =  Math.log((x - x0)/(x1 - x0)*(Math.E - 1) + 1) / Math.log(t) * (y1 - y0) + y0;
+    return tr_x;
+}
 
 
 function gamepadVibrate() {
@@ -104,6 +121,9 @@ function addNewPads() {
                 gamepad_axe_y = 0.0;
                 speed_up_rate = SPEEDUP_RATE_MIN;
             }
+
+            gamepad_axe_x = toLogarithm(gamepad_axe_x);
+            gamepad_axe_y = toLogarithm(gamepad_axe_y);
 
             //if (gp_zoom_in != is_gp_zoom_in_pressed) 
             {

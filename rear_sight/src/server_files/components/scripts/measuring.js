@@ -73,8 +73,8 @@ function measuringRoutine() {
         if (string_index > 19) {
             string_index = 19;
         }
-        ws.send('{"comm":["SET_FCI:' + string_index + '"]}');
-        ws.send('{"comm":["GET_FCI"]}');
+        ws_send('{"comm":["SET_FCI:' + string_index + '"]}');
+        ws_send('{"comm":["GET_FCI"]}');
     }
 }
 
