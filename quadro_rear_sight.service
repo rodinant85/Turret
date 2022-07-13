@@ -1,12 +1,13 @@
 [Unit]
-Description=starting an quadro gun rear sight
+Description=starting an quadro rear sight node js server
 
 [Service]
 Type=simple
 User=pi
 Group=pi
 Restart=on-failure
-ExecStart=/home/pi/rear_sight/run_driven.sh
+WorkingDirectory=/home/pi/Turret/rear_sight
+ExecStart=node app.js
 
 [Install]
 WantedBy=multi-user.target

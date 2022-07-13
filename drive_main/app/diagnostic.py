@@ -24,9 +24,9 @@ def get_temperature():
 
 
 def get_ip():
-    for i in range(0, 10):
+    for i in range(0, 120):
         eth_response = os.popen(f'ip addr show eth0').read()
-        if 'inet ' in eth_response:
+        if '192.168.' in eth_response:
             return eth_response.split("inet ")[1].split("/")[0]
         else:
             time.sleep(1)

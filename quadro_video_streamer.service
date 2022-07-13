@@ -1,0 +1,19 @@
+[Unit]
+Description=Streams video with Raspberry Pi Camera
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/Turret/video_streamer
+ExecStart=/home/pi/Turret/video_streamer/start.sh
+ExecStartPost=/home/pi/Turret/ip_routes.sh
+Restart=always
+RestartSec=5
+Environment=
+
+[Install]
+WantedBy=multi-user.target
+

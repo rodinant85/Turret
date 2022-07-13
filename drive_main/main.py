@@ -41,7 +41,9 @@ def start_rear_sight():
     time.sleep(1)
     if service_alive('quadro_rear_sight.service'):
         info_log.info('Service rear_sight is working')
-    if not web_ready(f'http://{MY_IP}:56778'):
+    if not is_web_alive(f'http://{MY_IP}:8080'):
+        exc_log.error('Video streamer not response')
+    if not web_ready(f'http://{MY_IP}:8081'):
         exc_log.error('Web not response for 60 sec. Reboot.')
         stop_program()
     else:
@@ -88,7 +90,12 @@ if not MY_IP:
 else:
     info_log.info(f'MY IP: {MY_IP}')
     
-start_service('streamer_mjpg')
+start_service('quadro_video_streamer')
+
+if service_alive('quadro_video_streamer.service'):
+    info_log.info('Video streamer is alive')
+else:
+    exc_log.error('Video streamer is not alive')
 
 CONFIG_PATH = "/home/pi/rear_sight/src/server_files/components/scripts/config_ws2.js"
 os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
@@ -121,11 +128,13 @@ while True:
                              f' Drive plate Serial ERROR')
     if not service_alive('quadro_websocket_server.service'):
         exc_log.error('Websocket service is not alive')
+    if not service_alive('quadro_video_streamer.service'):
+        exc_log.error('Video streamer service is not alive')
     if not service_alive('quadro_rear_sight.service'):
         exc_log.error('Rear_sight service is not alive')
     if not ws_client.server_ready():
         exc_log.error('Websocket is not response')
-    if not web_ready(f'http://{MY_IP}:56778', time_for_check=1):
+    if not web_ready(f'http://{MY_IP}:8081', time_for_check=1):
         exc_log.error('Web is not response')
         stop_service('quadro_rear_sight')
     if get_temperature() < 50 and not service_alive('quadro_rear_sight.service'):
