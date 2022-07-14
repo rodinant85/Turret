@@ -1,2 +1,2 @@
-console=tty1 root=ROOTDEV rootfstype=ext4 fsck.repair=yes rootwait quiet splash plymouth.ignore-serial-consoles
+console=tty1 root=PARTUUID=4a422963-02 rootfstype=ext4 fsck.repair=yes rootwait quiet splash plymouth.ignore-serial-consoles
 
