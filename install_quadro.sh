@@ -24,7 +24,6 @@ sudo systemctl daemon-reload
 
 echo "install config..."
 sudo cp config.txt /boot
-sudo cp cmdline.txt /boot
 
 echo "delete install files..."
 sudo rm -rf quadro*
@@ -35,6 +34,7 @@ sudo rm -rf websocket_server
 echo "enable uart..."
 sudo systemctl disable hciuart
 sudo systemctl mask serial-getty@ttyAMA0.service
+sudo sed -e s/console=serial0,115200 //g -i /boot/cmdline.txt
 
 echo "enable main service..."
 sudo systemctl enable quadro_main.service
