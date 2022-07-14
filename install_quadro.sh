@@ -1,6 +1,7 @@
 #!/bin/bash
 
 sudo apt-get install iptables -y
+sudo apt-get install git -y
 
 git clone --branch quadro_node https://github.com/rodinant85/Turret
 
@@ -20,6 +21,9 @@ sudo sh ./install_main_and_websocket.sh
 echo "install services..."
 sudo cp quadro_* /etc/systemd/system
 sudo systemctl daemon-reload
+
+echo "install config..."
+sudo cp config.txt /boot
 
 echo "delete install files..."
 sudo rm -rf quadro*
