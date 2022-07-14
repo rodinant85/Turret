@@ -28,6 +28,8 @@ sudo cp config.txt /boot
 echo "delete install files..."
 sudo rm -rf quadro*
 sudo rm -rf install*
+sudo rm -rf config.txt
+sudo rm -rf README.md
 sudo rm -rf drive_main
 sudo rm -rf websocket_server
 
