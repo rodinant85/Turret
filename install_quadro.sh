@@ -24,6 +24,7 @@ sudo systemctl daemon-reload
 
 echo "install config..."
 sudo cp config.txt /boot
+sudo cp cmdline.txt /boot
 
 echo "delete install files..."
 sudo rm -rf quadro*
