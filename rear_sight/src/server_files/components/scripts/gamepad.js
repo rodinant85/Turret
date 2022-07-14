@@ -2,7 +2,9 @@ const GAMEPAD_PRESENT = true;
 const GAMEPAD_THRESHOLD = 0.1;
 const SPEEDUP_RATE_MIN = 0.3;
 const SPEEDUP_RATE_MAX = 2.5;
-const SPEEDUP_RATE_STEP = 0.1;
+const SPEEDUP_RATE_STEP = 0.25;
+const SPEEDUP_IGNORE_ON_X = true;
+const SPEEDUP_IGNORE_ON_Y = true;
 
 var gamepad_axe_x = 0.0;
 var gamepad_axe_y = 0.0;
@@ -24,9 +26,12 @@ var gamepad_simulate_key_repeat_interval = 0;
 var gamepads = [];
 
 
-function toLogarithm(x) {
-    // slope of the logarithm
-    let t = 100;
+function toLogarithm(x, p, t) {
+    // p: start shift part
+    // within the limits of [0.0, 1.0]
+
+    // t: slope of the logarithm
+    //let t = 100;
 
     // fixed point No 0
     let x0 = 0;
@@ -36,8 +41,18 @@ function toLogarithm(x) {
     let x1 = 3;
     let y1 = 3;
 
-    let tr_x =  Math.log((x - x0)/(x1 - x0)*(Math.E - 1) + 1) / Math.log(t) * (y1 - y0) + y0;
-    return tr_x;
+    if (x > 0) {
+        let tr_x =  Math.log((x - x0)/(x1 - x0)*(Math.E - 1) + 1) / Math.log(t) * (y1 - y0) + y0;
+        let r = p * y1 + tr_x * (1.0 - p);
+        return r;
+    } else if (x == 0) {
+        return 0;
+    } else if (x < 0) {
+        x = -x;
+        let tr_x =  Math.log((x - x0)/(x1 - x0)*(Math.E - 1) + 1) / Math.log(t) * (y1 - y0) + y0;
+        let r = p * y1 + tr_x * (1.0 - p);
+        return -r;
+    }
 }
 
 
@@ -109,8 +124,18 @@ function addNewPads() {
                     {
                         speed_up_rate += SPEEDUP_RATE_STEP;
                     }
-                    gamepad_axe_x = x * speed_up_rate;
-                    gamepad_axe_y = wy * speed_up_rate;                
+
+                    if (SPEEDUP_IGNORE_ON_X) {
+                        gamepad_axe_x = x * SPEEDUP_RATE_MAX;
+                    } else {
+                        gamepad_axe_x = x * speed_up_rate;
+                    }                    
+
+                    if (SPEEDUP_IGNORE_ON_Y) {
+                        gamepad_axe_y = wy * SPEEDUP_RATE_MAX;
+                    } else {
+                        gamepad_axe_y = wy * speed_up_rate;
+                    }
                 } else {
                     gamepad_axe_x = x * speed_down_rate;
                     gamepad_axe_y = wy * speed_down_rate;
@@ -122,8 +147,8 @@ function addNewPads() {
                 speed_up_rate = SPEEDUP_RATE_MIN;
             }
 
-            gamepad_axe_x = toLogarithm(gamepad_axe_x);
-            gamepad_axe_y = toLogarithm(gamepad_axe_y);
+            gamepad_axe_x = toLogarithm(gamepad_axe_x, 0.0, 100);
+            gamepad_axe_y = toLogarithm(gamepad_axe_y, 0.65, 3);
 
             //if (gp_zoom_in != is_gp_zoom_in_pressed) 
             {
