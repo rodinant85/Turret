@@ -32,8 +32,8 @@ sudo rm -rf drive_main
 sudo rm -rf websocket_server
 
 echo "enable uart..."
-systemctl disable hciuart
-systemctl mask serial-getty@ttyAMA0.service
+sudo systemctl disable hciuart
+sudo systemctl mask serial-getty@ttyAMA0.service
 
 echo "enable main service..."
 sudo systemctl enable quadro_main.service
