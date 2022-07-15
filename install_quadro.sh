@@ -1,5 +1,6 @@
 #!/bin/bash
 
+sudo apt-get update -y
 sudo apt-get install iptables -y
 sudo apt-get install git -y
 
