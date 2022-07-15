@@ -9,7 +9,7 @@ const SPEEDUP_IGNORE_ON_Y = true;
 var gamepad_axe_x = 0.0;
 var gamepad_axe_y = 0.0;
 var speed_up_rate = SPEEDUP_RATE_MIN;
-var speed_down_rate = 0.1;
+var speed_down_rate = 1.0;
 
 var is_gp_ctrl_pressed = false;
 var is_gp_alt_pressed = false;
@@ -38,8 +38,8 @@ function toLogarithm(x, p, t) {
     let y0 = 0;
 
     // fixed point No 1
-    let x1 = 3;
-    let y1 = 3;
+    let x1 = SPEEDUP_RATE_MAX;
+    let y1 = SPEEDUP_RATE_MAX;
 
     if (x > 0) {
         let tr_x =  Math.log((x - x0)/(x1 - x0)*(Math.E - 1) + 1) / Math.log(t) * (y1 - y0) + y0;
@@ -52,6 +52,27 @@ function toLogarithm(x, p, t) {
         let tr_x =  Math.log((x - x0)/(x1 - x0)*(Math.E - 1) + 1) / Math.log(t) * (y1 - y0) + y0;
         let r = p * y1 + tr_x * (1.0 - p);
         return -r;
+    }
+}
+
+
+function toLinear(x, p) {
+    // p: start shift part
+    // within the limits of [0.0, 1.0]
+
+    // fixed point No 1
+    let x1 = SPEEDUP_RATE_MAX;
+    let y1 = SPEEDUP_RATE_MAX;
+
+    if (x > 0) {
+        let tr_x = p * y1 + x * (1.0 - p);
+        return tr_x;
+    } else if (x == 0) {
+        return 0.0;
+    } else if (x < 0) {
+        x = -x;
+        let tr_x = p * y1 + x * (1.0 - p);
+        return -tr_x;
     }
 }
 
@@ -119,17 +140,17 @@ function addNewPads() {
 
             if (Math.abs(x) > GAMEPAD_THRESHOLD || Math.abs(wy) >GAMEPAD_THRESHOLD)
             {
+                if (SPEEDUP_IGNORE_ON_X) {
+                    gamepad_axe_x = x * SPEEDUP_RATE_MAX;
+                } else {
+                    gamepad_axe_x = x * speed_up_rate;
+                }
+
                 if (is_speed_up) {
                     if (speed_up_rate < SPEEDUP_RATE_MAX)
                     {
                         speed_up_rate += SPEEDUP_RATE_STEP;
                     }
-
-                    if (SPEEDUP_IGNORE_ON_X) {
-                        gamepad_axe_x = x * SPEEDUP_RATE_MAX;
-                    } else {
-                        gamepad_axe_x = x * speed_up_rate;
-                    }                    
 
                     if (SPEEDUP_IGNORE_ON_Y) {
                         gamepad_axe_y = wy * SPEEDUP_RATE_MAX;
@@ -137,7 +158,6 @@ function addNewPads() {
                         gamepad_axe_y = wy * speed_up_rate;
                     }
                 } else {
-                    gamepad_axe_x = x * speed_down_rate;
                     gamepad_axe_y = wy * speed_down_rate;
                     speed_up_rate = SPEEDUP_RATE_MIN;
                 }
@@ -148,7 +168,9 @@ function addNewPads() {
             }
 
             gamepad_axe_x = toLogarithm(gamepad_axe_x, 0.0, 100);
-            gamepad_axe_y = toLogarithm(gamepad_axe_y, 0.65, 3);
+
+            //gamepad_axe_y  = toLogarithm(gamepad_axe_y, 0.2, 1.001);
+            gamepad_axe_y = toLinear(gamepad_axe_y, 0.0);
 
             //if (gp_zoom_in != is_gp_zoom_in_pressed) 
             {
