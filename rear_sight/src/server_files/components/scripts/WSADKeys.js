@@ -299,40 +299,41 @@ function mouseOnDistInfo(){
 //     }
 // }
 
-$(document).keydown(function (e) {
-    if (e.which === 9) {
-        console.log("Tab is pressed");
+// $(document).keydown(function (e) {
+//     if (e.which === 9) {
+//         console.log("Tab is pressed");
 
-        let element = document.getElementById("leftcol");
-        element.style.display = (element.style.display === 'none') ? 'block' : 'none';
+//         let element = document.getElementById("leftcol");
+//         element.style.display = (element.style.display === 'none') ? 'block' : 'none';
 
-/*
-        BrowserWindow.getAllWindows().forEach(function (win) {
-            if (win.id > 1) {
-                win.close()
-            }
-        })
-        */
-    }
-    return e;
-});
+// /*
+//         BrowserWindow.getAllWindows().forEach(function (win) {
+//             if (win.id > 1) {
+//                 win.close()
+//             }
+//         })
+//         */
+//     }
+//     return e;
+// });
 
-$(document).keydown(function (e) {
-    if (e.which === 76 && 75) {
-        console.log("L is pressed");
 
-        let ellipseVertical = document.getElementById("VS");
-        let ellipseHorizontal = document.getElementById("HS");
-        ellipseVertical.style.display = (ellipseVertical.style.display === 'none') ? 'block' : 'none';
-        ellipseHorizontal.style.display = (ellipseHorizontal.style.display === 'none') ? 'block' : 'none';
+// $(document).keydown(function (e) {
+//     if (e.which === 76 && 75) {
+//         console.log("L is pressed");
 
-        /*
-                BrowserWindow.getAllWindows().forEach(function (win) {
-                    if (win.id > 1) {
-                        win.close()
-                    }
-                })
-                */
-    }
-    return e;
-});
+//         let ellipseVertical = document.getElementById("VS");
+//         let ellipseHorizontal = document.getElementById("HS");
+//         ellipseVertical.style.display = (ellipseVertical.style.display === 'none') ? 'block' : 'none';
+//         ellipseHorizontal.style.display = (ellipseHorizontal.style.display === 'none') ? 'block' : 'none';
+
+//         /*
+//                 BrowserWindow.getAllWindows().forEach(function (win) {
+//                     if (win.id > 1) {
+//                         win.close()
+//                     }
+//                 })
+//                 */
+//     }
+//     return e;
+// });

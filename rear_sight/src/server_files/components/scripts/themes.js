@@ -20,9 +20,9 @@ function blackMode () {
     //black.style.backgroundColor = (black.style.backgroundColor === 'black') ? 'rgba(76, 175, 80, 0.5)' : 'black';
 }
 
-$(document).keydown(function (e) {
-    if (e.which == 66) {
-        blackMode();
-    }
-    return e;
-});
+// $(document).keydown(function (e) {
+//     if (e.which == 66) {
+//         blackMode();
+//     }
+//     return e;
+// });

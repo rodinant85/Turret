@@ -1825,3 +1825,12 @@ function reload() {
 // setInterval(function() {
 //     document.getElementById('verticalSlider').style.width="70px";
 // }, 0);
+
+
+$(document).ready(function() {
+    // hide some elements that are not needed in the quad bike interface
+    document.getElementsByClassName("b-container")[0].classList.add("hidden-class");
+    document.getElementsByClassName("ellipseHorizontal")[0].classList.add("hidden-class");
+    document.getElementsByClassName("ellipseVertical")[0].classList.add("hidden-class");
+    document.getElementsByClassName("distInfo")[0].classList.add("hidden-class");
+});

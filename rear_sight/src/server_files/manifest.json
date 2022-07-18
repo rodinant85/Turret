@@ -5,7 +5,7 @@
   "theme_color": "#0d085c",
   "icons": [
     {
-      "src": "/components/images/icon.png",
+      "src": "components/images/icon.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"

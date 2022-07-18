@@ -127,11 +127,13 @@ $(document).keydown(function (e) {
     }
 
     if (e.code == "KeyH") {
-        startStopColibration();
+        // it is no more sense at the old calibration procedure for quad-bike
+        //startStopColibration();
     }
 
     if (e.code == "KeyJ") {
-        startBinding();
+        // it is no more sense at the old binding procedure for quad-bike
+        //startBinding();
     }
 
     if (e.code == "KeyP") {
