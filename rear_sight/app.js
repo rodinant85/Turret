@@ -2,7 +2,7 @@ const express = require('express'),
     app = express(),
     http = require('http').createServer(app);
 
-const host = '192.168.88.237';
+const host = '127.0.0.1';
 const port = 8081;
 
 
