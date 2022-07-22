@@ -11,7 +11,7 @@ let full_screen_height_in_mrad;
 
 
 function processMeasuring() {
-    if (!(isRightSquareBracket_ButtonPushed || isLeftSquareBracket_ButtonPushed || isEquals_ButtonPushed)) {
+    if (!(is_RightSquareBracket_pressed || is_LeftSquareBracket_pressed)) { // || isEquals_ButtonPushed)) {
         return;
     }
 
@@ -25,19 +25,22 @@ function measuringRoutine() {
     resetMeasuringInterval();
     measuringImageShow();
 
-    if (isRightSquareBracket_ButtonPushed && is_measuring) {
+    if (is_RightSquareBracket_pressed && is_measuring) {
         measuring_zoom += MEASURING_ZOOM_STEP;
         if (measuring_zoom > MEASURING_ZOOM_MAX) {
             measuring_zoom = MEASURING_ZOOM_MAX;
         }
-    } else if (isLeftSquareBracket_ButtonPushed && is_measuring) {
+    } else if (is_LeftSquareBracket_pressed && is_measuring) {
         measuring_zoom -= MEASURING_ZOOM_STEP;
         if (measuring_zoom < MEASURING_ZOOM_MIN) {
             measuring_zoom = MEASURING_ZOOM_MIN;
         }
-    } else if (isEquals_ButtonPushed && is_measuring) {
+    } 
+    /*
+     else if (isEquals_ButtonPushed && is_measuring) {
         is_select_distance_needed = true;
     }
+    */ 
 
     is_measuring = true;
 
@@ -49,9 +52,9 @@ function measuringRoutine() {
 
     let square_image_width_part = square_image_zoomed_width_px / rvs.w;
  
-    if (!isStreamsSwapped) {
+    /* if (!isStreamsSwapped) {
         square_image_width_part *= video_zoom;
-    }
+    } */
 
     let square_image_width_in_mrad = full_screen_width_in_mrad * square_image_width_part;
     let dist = 1000 / square_image_width_in_mrad;

@@ -1462,3 +1462,127 @@ button {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+
+
+
+
+
+
+
+
+
+
+#slider_div {
+    /*background-color: red; */
+    width: 100px; 
+    height: 20px; 
+    padding: 2px;
+  }
+  
+  #pointer_div {
+    /*background-color: white; */
+    width: 16px; 
+    height: 16px; 
+    border: 2px solid black; 
+    position: relative; 
+    --position: 30%; 
+    left: var(--position);
+  }
+  
+  #full_back_div {
+    /*background-color: darkblue; */
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left 0;
+    top: 0;
+    text-align: center;
+  }
+  
+  #at_bottom_div {
+    /*background-color: blue; */
+    position: absolute;
+    bottom: 5%; 
+    width: 100%;
+    height: 10%;
+    text-allign: center;
+  }
+  
+  #horizontaly_centered_div {
+    /*background-color: white; */
+    margin: 0 auto;
+    width: 60%;
+    text-allign: center;
+  }
+  
+  #top_div, #bottom_div {
+    background-color: rgba(186,186,186,0.6);
+    display: flex;
+    padding-left: 10px;
+    padding-right: 10px;
+    justify-content: space-between;
+  }
+  
+  #range_input {
+    width: 100%;
+  }
+  
+  #at_right_div {
+    /*background-color: green; */
+    position: absolute;
+    right: 5%; 
+    width: 10%;
+    height: 100%;
+    display: flex;
+  }
+  
+  #left_column_div {
+    /*background-color: darkgreen; */
+    flex: 50%;
+    width: 50%;
+    height: 80%;
+    margin-top: 20%;
+  }
+  
+  #right_column_div {
+    background-color: rgba(186,186,186,0.6);
+    flex: 50%;
+    width: 50%;
+    height: 80%;
+    margin-top: 20%;
+  }
+  
+  #v_range_input {
+    position: relative;
+    height: 90%;
+    top: 5%;
+    width: 100%;
+  }
+  
+  input[type=range][orient=vertical]
+  {
+      writing-mode: bt-lr; /* IE */
+      -webkit-appearance: slider-vertical; /* Chromium */
+     
+  }
+  
+  
+  .disabledclass::-webkit-slider-thumb {
+     
+      appearance: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: #5050AF;
+      cursor: default;
+  }
+  
+  .disabledclass {
+      -webkit-appearance: none;
+      border-radius: 5px;
+      background: #d3d3d3;
+      outline: none;
+  }

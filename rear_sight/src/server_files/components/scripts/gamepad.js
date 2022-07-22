@@ -4,7 +4,7 @@ const SPEEDUP_RATE_MIN = 0.3;
 const SPEEDUP_RATE_MAX = 2.5;
 const SPEEDUP_RATE_STEP = 0.25;
 const SPEEDUP_IGNORE_ON_X = true;
-const SPEEDUP_IGNORE_ON_Y = true;
+const SPEEDUP_IGNORE_ON_Y = false;
 
 var gamepad_axe_x = 0.0;
 var gamepad_axe_y = 0.0;
@@ -20,6 +20,7 @@ var is_gp_tracker_stop_pressed = false;
 var is_gp_measuring_plus_pressed = false;
 var is_gp_measuring_minus_pressed = false;
 var is_gp_set_distance_pressed = false;
+var is_gp_steer_to_center_pressed = false;
 
 var gamepad_simulate_key_repeat_interval = 0;
 
@@ -126,9 +127,10 @@ function addNewPads() {
             let gp_zoom_in = gp.buttons[3].pressed;
             let gp_zoom_out = gp.buttons[0].pressed;
             let gp_tracker_stop = gp.buttons[1].pressed;
-            var gp_measuring_plus = gp.buttons[5].pressed;
-            var gp_measuring_minus = gp.buttons[7].pressed;
-            var gp_set_distance = gp.buttons[2].pressed;
+            let gp_measuring_plus = gp.buttons[5].pressed;
+            let gp_measuring_minus = gp.buttons[7].pressed;
+            let gp_set_distance = gp.buttons[2].pressed;
+            let gp_steer_to_center = (gp.axes[3] >= 1.0);
 
             let wy = y;
             if (typeof IS_QUAD_BIKE != 'undefined') {
@@ -254,7 +256,16 @@ function addNewPads() {
 
             is_gp_tracker_stop_pressed = gp_tracker_stop;
             if (is_gp_tracker_stop_pressed) {
-                trackerStop();
+                //trackerStop();
+            }
+
+            if (is_gp_steer_to_center_pressed != gp_steer_to_center) {
+                is_gp_steer_to_center_pressed = gp_steer_to_center;
+                if (is_gp_steer_to_center_pressed) {
+                    simulateCDown();
+                } else {
+                    simulateCUp();
+                }
             }
         }
     } else {
@@ -326,6 +337,14 @@ function simulateEqualDown() {
 
 function simulateEqualUp() {
     simulateKeyEvent("keyup", 0, "Equal", "=", 187, 187);
+}
+
+function simulateCDown() {
+    simulateKeyEvent("keydown", 0, "KeyC", "c", 67, 67);
+}
+
+function simulateCUp() {
+    simulateKeyEvent("keyup", 0, "KeyC", "c", 67, 67);
 }
 
 

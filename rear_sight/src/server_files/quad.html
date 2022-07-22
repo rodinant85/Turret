@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--  xmlns="http://www.w3.org/1999/html"-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>REAR SIGHT</title>
+    <!-- CSS only -->
+    <link rel="stylesheet" href="src/server_files/components/styles/bootstrap-icons/bootstrap-icons.css">
+    <link rel="manifest" href="src/server_files/manifest.json"/>
+    <script src="src/server_files/components/scripts/lib/jquery.min.js"></script>
+    <script src="src/server_files/components/scripts/lib/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="src/server_files/components/scripts/lib/adapter-latest.js"></script>
+    <script src='src/server_files/components/scripts/lib/joy.js'></script>
+
+    <link rel="stylesheet" type="text/css" href="src/server_files/components/styles/app_view.css"/>
+    <link rel="stylesheet" type="text/css" href="src/server_files/components/styles/jquery-ui.css">
+    <link rel="icon" href="src/server_files/components/images/icon.png"/>
+    <link href="src/server_files/components/styles/ShareTech-Regular.ttf" rel="font/ttf">
+    <meta name="viewport" content="width=device-width">
+    <script src="src/server_files/components/scripts/lib/interact.min.js"></script>
+    <script src="src/server_files/components/scripts/lib/TweenLite.min.js"></script>
+    <script src="src/server_files/components/scripts/lib/CSSPlugin.min.js"></script>
+    <script src="src/server_files/components/scripts/lib/EasePack.min.js"></script>
+    <script src="src/server_files/components/scripts/lib/jquery.rsSliderLens.js"></script>
+</head>
+
+<body>
+
+<div id="xMin"></div>
+<div id="xMax"></div>
+<div id="yMin"></div>
+<div id="yMax"></div>
+
+<!--div id="tracker_div" class="hidden-class">
+    <button id="tracker_stop_button" onclick="trackerStop();">Stop tracking (B)</button>
+</div-->
+
+<div id="errors_div" class="hidden-class">
+    <p id="errors_p" style="overflow-y: scroll;"></p>
+    <button id="errors_clear_button" onclick="errorsClear();">Clear</button>
+    <button id="errors_close_button" onclick="errorsClose();">Close</button>
+</div>
+
+<div id="measuring_div" class="hidden-class">
+    <img src="src/server_files/components/scripts/training/sq_02.png" class="outline">
+    <label id="measuring_label">1.0 mrad = 1m at 1000.00m</label>
+</div>
+
+<div id="streamDiv">
+    <img id="stream">
+</div>
+
+<div id="full_back_div">
+    <div id="at_right_div">
+      <div id="left_column_div">
+        
+      </div>
+      <div id="right_column_div">
+        <input id="v_range_input" type="range" orient="vertical" disabled class="disabledclass">
+      </div>
+    </div>
+    <div id="at_bottom_div">
+      <div id="horizontaly_centered_div">
+        <div id="top_div">
+          <input id="range_input" type="range" disabled class="disabledclass" min="0" max="100" value="50" step="1">
+        </div>
+        <div id="bottom_div">
+          <label>L</label> 
+          <label>C</label>
+          <label>R</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--<script src='/src/server_files/components/scripts/pwa-handler.js'></script>-->
+<!--script src='src/server_files/components/scripts/lib/rulez.min.js'></script-->
+<!--script type='module' src='src/server_files/components/scripts/lib/slide-ruler.js'></script-->
+<script src='src/server_files/components/scripts/gamepad.js'></script>
+<script src='src/server_files/components/scripts/config_ws2.js'></script>
+<script src='src/server_files/components/scripts/config_geometry.js'></script>
+<script src='src/server_files/components/scripts/config_stepper.js'></script>
+<script src='src/server_files/components/scripts/config_device.js'></script>
+<script src='src/server_files/components/scripts/cookies.js'></script>
+<script src='src/server_files/components/scripts/quad_keys.js'></script>
+<script src='src/server_files/components/scripts/quad_app.js'></script>
+<!--script src='src/server_files/components/scripts/WSADKeys.js'></script-->
+<!--script src="src/server_files/components/scripts/coordinates.js"></script-->
+<!--script src='src/server_files/components/scripts/keyboardMouseKeys.js'></script-->
+<!--script src='src/server_files/components/scripts/distInfo.js'></script-->
+<!--script src='src/server_files/components/scripts/themes.js'></script-->
+<!--script src='src/server_files/components/scripts/training/training.js'></script-->
+<script src='src/server_files/components/scripts/measuring.js'></script>
+
+
+</body>
+
+</html>

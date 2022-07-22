@@ -7,3 +7,5 @@ let SCREEN_HEIGHT_MM = 154;
 
 // This is the width of the square. It's not the width of the image.
 let SQUARE_IMAGE_WIDTH_PX = 200;
+
+let DISTANCE_OF_ONE_WHEEL_REVOLUTION_MITERS = 0.97;
